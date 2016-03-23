@@ -1,0 +1,31 @@
+Opencaching NODE ID assignments
+===============================
+
+ID	Country	            Website	                    Prefix 
+------------------------------------------------------------
+1	Opencaching Germany	http://www.opencaching.de	OC 
+2	Opencaching Poland	http://www.opencaching.pl	OP 
+3	Opencaching Czech	http://www.opencaching.cz	OZ 
+4	Local development only		
+5	Opencaching Entwicklung Deutschland	http://devel.opencaching.de	OC? 
+6	Opencaching Great Britain	http://www.opencaching.org.uk	OK 
+7	Opencaching Sweden	http://www.opencaching.se	OS 
+8	Opencaching Norway	http://www.opencaching.no	ON 
+9	Opencaching Latvian	http://www.opencaching.lv	OV 
+10	Opencaching North America	http://www.opencaching.us	OU 
+11	Opencaching Japan	http://www.opencaching.jp	OJ 
+12	Opencaching Russia	http://www.opencaching.org.ru ? http://www.opencaching.su ?	O? 
+13	Garmin Opencaching	http://www.opencaching.com	OX 
+14	Opencaching Nederland	http://www.opencaching.nl	OB 
+15	???	???	?? 
+16	Opencaching Romania	http://www.opencaching.ro	OR 
+?? 	Opencaching Spain	http://www.opencachingspain.es/	?? 
+?? 	Opencaching Italy	http://www.opencaching.it/	OC 
+?? 	Opencaching France	http://www.opencaching.fr	OC 
+
+Last updated 2016-03-11
+Source: http://blog.opencaching.ro/2016/03/11/opencaching-node_ids/
+
+Use 4 for development.
+Ask for a node ID from the Opencaching Forum here:
+http://forum.opencaching.de/index.php?board=24.0
