@@ -48,10 +48,32 @@ $config['server']['path']['ocdynamic'] = '/var/www/ocpl-data/';
 // Path to OC admin, outside the root path. REQUIRED
 $config['server']['path']['ocadmin'] = '/var/www/ocpl-admin/';
 
+// Safemode zip binary
+$config['server']['zip']['bin'] = '/var/www/ocpl/bin/phpzip.php';
+$config['server']['zip']['basedir'] = $config['server']['path']['ocdynamic'] . 'download/zip/';
+$config['server']['zip']['wwwdir'] = '/download/zip/';
+
 // *** Debugging **********************************************************
+
+// Maintenance mode
+$config['debug']['maitenance'] = false;
+// Debug level
+$config['debug']['output_level'] = '';
+//
+$config['debug']['general'] == false;
+$config['debug']['page'] = false;
+/*
+ * If set to true, all database queries will be reported in the page
+ * output. (Note, that this will cause most of the AJAX actions to stop
+ * functioning properly.)
+ */
+$config['debug']['db'] = false;
+// enable detailed cache access logging
+$config['debug']['cache_access_logs'] = false;
 
 // FIXME 
 // Do these variables get set somewhere, like taken from URL parameters?
+// Then they should be moved elsewhere, after inclusion of config (?)
 /* 
 //Debug?
 if (!isset($debug_page))
@@ -61,6 +83,7 @@ if (!isset($debug))
 $develwarning = '';
 
 //site in service? Set to false when doing bigger work on the database to prevent error's
+// reverse this setting with value above
 if (!isset($site_in_service))
     $site_in_service = true;
 */
@@ -79,11 +102,6 @@ $sql_warntime = 1;
 $sql_replacements['db'] = $dbname;
 $sql_replacements['tmpdb'] = 'test';
 
-// safemode_zip-binary
-$config['server']
-$safemode_zip = '/var/www/ocpl/bin/phpzip.php';
-$zip_basedir = $dynbasepath . 'download/zip/';
-$zip_wwwdir = '/download/zip/';
 */
 
 
@@ -103,9 +121,10 @@ $config['node']['id'] = 4;
 $config['node']['hostname'] = 'localhost';
 // Website domain name. REQUIRED
 $config['node']['domainname'] = 'localdomain';
+// Change if necessary. (ie. using https)
+$config['node']['proto'] = 'http://';
 // Webside URL. With trailing "/". REQUIRED.
-// Change it only if necessary. (ie. using https)
-$config['node']['url'] = 'http://' . $config['node']['hostname'] . '.' . $config['node']['domainname'] . '/';
+$config['node']['url'] = $config['node']['proto'] . $config['node']['hostname'] . '.' . $config['node']['domainname'] . '/';
 // Website name. REQUIRED.
 // Used to identify the creator of some content.
 $config['node']['name'] = 'Your website name';
@@ -118,6 +137,31 @@ $config['node']['title'] = 'Opencaching website';
 // Preferrably starting with "O"
 $config['node']['waypoint_prefix'] = 'OX';
 
+// *** Contact information ************************************************
+
+// contact_mail
+$config['node']['contact']['general'] = 'cog (at) opencaching.pl';
+// RR
+$config['node']['contact']['org'] = 'rr@opencaching.pl';
+// Admin / COG
+$config['node']['contact']['admin'] = 'cog@opencaching.pl';
+// mail_rt
+$config['node']['contact']['technical'] = 'rt@opencaching.pl';
+// mail_oc (OC Team)
+$config['node']['contact']['oc_team'] = 'ocpl@opencaching.pl';
+
+// Name of envelope sender for email notifications
+$config['node']['mail']['from'] = 'opencaching.pl';
+// No-reply email sender for server generated emails. 
+// Must configure in email subsystem as sink to /dev/null
+$config['node']['mail']['noreply'] = 'noreply@opencaching.pl';
+// Signature for server generated emails
+$config['node']['mail']['signiture'] = "Pozdrawiamy, Zesp├│┼é www.opencaching.pl";
+// Watchlist email sender for server generated emails. 
+$config['node']['mail']['watchlist'] = 'watch@opencaching.pl';
+
+
+
 // *** Cookies ************************************************************
 // Cookie settings (hostname dependent). Change only if necessary.
 $config['node']['cookie']['name'] = 'oc';
@@ -128,7 +172,7 @@ $config['node']['cookie']['domain'] = '.' . $config['node']['domainname'];
 // Style
 $config['node']['styles']['stylename'] = 'stdstyle';
 // Template
-$config['node']['styles']['template'] = $config['server']['path']['ocdynamic'] . 'tpl/' . $config['node']['styles']['stylename'] . '/html/';
+$config['node']['styles']['template'] = $config['server']['path']['ocdynamic'] . 'tpl/' . $config['node']['styles']['stylename'] . '/html/'; // not implemented yet
 // Header
 $config['node']['styles']['header'] = '__standard_header_images_set'; // not implemented yet
 // Icons
@@ -140,24 +184,12 @@ $config['node']['styles']['caches'] = '__standard_caches_set'; // not implemente
 // Attributes
 $config['node']['styles']['attributes'] = '__standard_attributes_set'; // not implemented yet
 
-// *** Administration *****************************************************
+// *** Feature personalization ********************************************
 
-// In your database, table `user`, set column `admin` to 1 for all users
-// that must have administrative privileges granted to OC Team (access to ADMIN MENU)
-
-// Super admin 
-// Super admin, in addition to OC Team privileges, can remove all logs and more
-// see admin_users.php. Super admin user must already be an admin.
-// set the value of `user_id` from table `user` here
-$config['node']['admin']['superadmin'] = '';
-
-// News settings
-// News requires approval?
-$config['node']['news']['approve'] = true;
-// Email to be notified about a news approval request
-$config['node']['news']['approve_email'] = 'rt@localhost';
-
-// *** Administration *****************************************************
+// search box on top of page
+$config['node']['quick_search']['byowner'] = false;
+$config['node']['quick_search']['byfinder'] = false;
+$config['node']['quick_search']['byuser'] = true;  
 
 /* ************************************************************************
  * Language and regional settings
@@ -185,9 +217,20 @@ $config['node']['lang']['countries'] = array('AT', 'BE', 'BY', 'BG', 'HR', 'CZ',
 // Default language list (for cache description selector)
 $config['node']['lang']['content_languages'] = array ('EN', 'PL', 'FR', 'DE', 'NL', 'RO',);
 
-
  
-/* ************************************************************************
+
+ /* ************************************************************************
+ * OKAPI settings
+ */
+
+$config['okapi']['data_license_url'] = 'http://wiki.opencaching.pl/index.php/OC_PL_Conditions_of_Use';
+$config['okapi']['admin_emails'] = false;
+// Replace with this to set actual emails: (for debugging purposes)
+// $config['okapi']['admin_emails'] = array('rygielski@mimuw.edu.pl', 'following@online.de');  
+ 
+
+
+ /* ************************************************************************
  * External API.
  * Change with your own API keys.
  */
@@ -200,9 +243,9 @@ $config['node']['api']['google']['key'] = ''; // <-- insert your API key here
 // Google map type
 // G_MAP_TYPE or _HYBRID_TYPE
 $config['node']['api']['google']['map_type'] = 'G_MAP_TYPE';
-// Set this to true to disable automatic translation of cache descriptions
+// Set this to true to enable automatic translation of cache descriptions
 // Google translation service became a paid service.
-$config['node']['api']['google']['translation'] = true;
+$config['node']['api']['google']['translation'] = false;
 
 // *** Garmin API *********************************************************
 
@@ -243,6 +286,36 @@ $config['oc']['rules']['own_caches'] = 1;
 $config['oc']['rules']['min_score'] = 0;
 // Maximum score
 $config['oc']['rules']['max_score'] = 4;
+// Minimum distance between caches (physical containers) in meters
+$config['oc']['rules']['proximity'] = 150; 
+// Minimum number of finds a user must have to see a cache's waypoint on another site
+$config['oc']['rules']['other_sites'] = 100;
+
+// Enable refering waypoints from other sites
+$config['oc']['other']['geocaching_com'] = 1;
+$config['oc']['other']['terracaching_com'] = 1;
+$config['oc']['other']['navicache_com'] = 1;
+$config['oc']['other']['gpsgames_com'] = 1;
+$config['oc']['other']['qualitycaching_com'] = 0; // BeNeLux only
+
+// Cache types that are not allowed to be publised
+// Cachetypes must be lib/cache.php constant TYPE_*
+$config['oc']['rules']['forbidden_cache_types'] = array(
+        cache::TYPE_VIRTUAL,
+        cache::TYPE_WEBCAM,
+        cache::TYPE_GEOPATHFINAL
+    );
+// How many caches of these types can be published by one user  
+// Cachetypes must be lib/cache.php constant TYPE_*
+// Place cachetype and limit here.  
+$config['oc']['rules']['owncache'] = array(
+        cache::TYPE_OWNCACHE => 1,
+    );
+// Cache sizes that are not allowed to be published    
+// Cachesizes must be lib/cache.php constant SIZE_*
+$config['oc']['rules']['forbidden_cache_sizes'] = array(
+        //cache::SIZE_MICRO
+    );
 
 // *** Rewards ************************************************************
 
@@ -252,9 +325,219 @@ $config['oc']['titled_cache']['prefix'] = 'week';
 
 
 
+/* ************************************************************************
+ * Limits
+ * Change only if your node's limits differ from the defaults.
+ */
 
+// *** Image uploads ******************************************************
 
+// Image file size limit in MB
+$config['limits']['image']['filesize'] = 3.5;
+// Resize large images ? (1=yes; 0=no)
+$config['limits']['image']['resize'] = 1;
+// If resize large images = 1
+// only resize files larger then this, in MB
+$config['limits']['image']['resize_larger'] = 0.1;
+// Image maximum width in pixels (aspect ratio preserved)
+$config['limits']['image']['width'] = 640;
+// Image maximum height in pixels (aspect ratio preserved)
+$config['limits']['image']['height'] = 640;
+// Image recommended size in pixels (for translations)
+$config['limits']['image']['pixels_text'] = '640 x 480';
+// Allowed extensions (image formats)
+$config['limits']['image']['extension'] = ';jpg;jpeg;gif;png;';
+$config['limits']['image']['extension_text'] = 'JPG, PNG, GIF'; 
 
+// *** Audio uploads ******************************************************
+
+// Audio file size limit in MB
+$config['limits']['audio']['filesize'] = 5;
+// Allowed extensions (audio formats)
+$config['limits']['audio']['extension'] = ';mp3;ogg;';
+$config['limits']['audio']['extension_text'] = 'MP3, OGG'; 
+
+// *** Attachment uploads *************************************************
+
+// Attachment file size limit in MB
+$config['limits']['attach']['filesize'] = 10;
+// Allowed extensions (audio formats)
+$config['limits']['attach']['extension'] = ';pdf;gwc;gpx;kml;';
+$config['limits']['attach']['extension_text'] = 'PDF, GWC, GPX, KML'; 
+/* For future development
+ Allow attaching of the following file formats:
+- PDF documents (for information)
+- GWC Wherigo cartridge
+- GPX and KML with tracks or routes or waypoints
+*/
+
+/* ************************************************************************
+ * Maps
+ * Change according to your geographical coverage.
+ */
+
+// mapper module for cache maps
+$config['maps']['mapper'] = "lib/mapper_okapi.php";  
+
+// cache map v2
+$config['maps']['mapv2'] = true;
+// cache map v3
+$config['maps']['mapv3'] = true;
+// Flopp's map
+$config['maps']['flopp'] = true;
+
+// default coordinates for cachemap, set to your country's center of gravity
+$config['maps']['country']['coords'] = "52.5,19.2";
+// zoom level at which your whole country/region is shown on map
+$config['maps']['country']['zoom'] = 6;
+
+// Main page map
+$config['maps']['main_page']['lat'] = 52.13;
+$config['maps']['main_page']['lon'] = 19.20;
+$config['maps']['main_page']['zoom'] = 5;
+$config['maps']['main_page']['width'] = 250;
+$config['maps']['main_page']['height'] = 260;
+
+// Filter fragment for selecting region / province / state from nuts_codes table
+$config['maps']['nuts']['filter'] = '`code` like \'PL__\'';
+
+// Nature2000 link
+$config['maps']['natura2000'] = '<a style="color:blue;" target="_blank" href="http://obszary.natura2000.org.pl/index.php?s=obszar&amp;id={linkid}">{sitename}&nbsp;&nbsp;-&nbsp;&nbsp;{sitecode}</a>';
+    
+/* ************************************************************************
+ * Configuration for map v3 maps
+ *
+ * Two dimensional array:
+ *
+ * * first dimension
+ * KEYS - internal names
+ *
+ * * second dimension
+ * KEYS:
+ *  - hidden: boolean attribute to hide the map entirerly, without removing it from config
+ *  - showOnlyIfMore: show this map item only in large views (like full screen)
+ *  - attribution: the HTML snippet that will be shown in bottom-right part of the map
+ *  - imageMapTypeJS: the complete JS expression returning instance of google.maps.ImageMapType,
+ *      if set, not other properties below will work
+ *  - name: the name of the map
+ *  - tileUrl: URL to the tile, may contain following substitutions
+ *      - {z} - zoom, may include shifts, in form of i.e. {z+1}, {z-3}
+ *      - {x}, {y} - point coordinates
+ *  - tileUrlJS: the complete JS expression returning function for tileUrl retrieval,
+ *      if set, tileUrl property will not work
+ *  - tileSize: the tile size, either in form of WIDTHxHEIGHT, i.e. 256x128, or complete
+ *      JS expression returning instance of google.maps.Size
+ *  - maxZoom: maximum zoom available
+ *  - minZoom: minimum zoom available
+ *  - enabled: enable this tile source
+ *
+ * Other keys, will be passed as is, given that
+ *  - numerical and boolean values are passed as is to JS
+ *  - other types are passed as strings, unless they start with raw: prefix. In that case,
+ *      they are passed as JS expressions
+ */
+
+// OSMapa tiles
+$config['maps']['mapsConfig']['OSMapa'] = array(
+        'attribution' => '&copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC BY-SA</a> | Hosting:<a href="http://trail.pl/" target="_blank">trail.pl</a> i <a href="http://centuria.pl/" target="_blank">centuria.pl</a>',
+        'name' => 'OSMapa',
+        'tileUrl' => 'http://tile.openstreetmap.pl/osmapa.pl/{z}/{x}/{y}.png',
+        'maxZoom' => 18,
+        'tileSize' => '256x256',
+        'enabled' => true,
+    );
+// OpenStreetMap tiles    
+$config['maps']['mapsConfig']['OSM'] = array(
+        'name' => 'OSM',
+        'attribution' => '&copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC BY-SA</a>',
+        'tileUrl' => 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
+        'maxZoom' => 18,
+        'tileSize' => '256x256',
+        'showOnlyIfMore' => true
+        'enabled' => true,
+    );
+// UMP tiles    
+$config['maps']['mapsConfig']['UMP'] = array(
+        'name' => 'UMP',
+        'attribution' => '&copy; Mapa z <a href="http://ump.waw.pl/" target="_blank">UMP-pcPL</a>',
+        'tileUrl' => 'http://tiles.ump.waw.pl/ump_tiles/{z}/{x}/{y}.png',
+        'maxZoom' => 18,
+        'tileSize' => '256x256',
+        'enabled' => true,
+    );
+// Topographical tiles
+$config['maps']['mapsConfig']['Topo'] = array(
+        'attribution' => '&copy; <a href="http://geoportal.gov.pl/" target="_blank">geoportal.gov.pl</a>',
+        'showOnlyIfMore' => true,
+        'imageMapTypeJS' => 'new google.maps.ImageMapType(new WMSImageMapTypeOptions(
+                                        "Topo",
+                                        "http://mapy.geoportal.gov.pl:80/wss/service/img/guest/TOPO/MapServer/WmsServer",
+                                        "Raster",
+                                        "",
+                                        "image/jpeg"))',
+        'enabled' => true,
+    );
+// Orto    
+$config['maps']['mapsConfig']['Orto'] = array(
+        'attribution' => '&copy; <a href="http://geoportal.gov.pl/" target="_blank">geoportal.gov.pl</a>',
+        'showOnlyIfMore' => true,
+        'imageMapTypeJS' => 'new google.maps.ImageMapType(new WMSImageMapTypeOptions(
+                                        "Orto",
+                                        "http://mapy.geoportal.gov.pl:80/wss/service/img/guest/ORTO/MapServer/WmsServer",
+                                        "Raster",
+                                        "",
+                                        "image/jpeg"))',
+        'enabled' => true,
+    );
+
+/* ************************************************************************
+ * Cache page mini map
+ * ************************************************************************ */
+
+/* Cache page small map, fixed, clickable to open minimap.                  */ 
+// available options are roadmap, terrain, map, satellite, hybrid
+$config['maps']['cache_page_map']['layer'] = 'terrain';
+$config['maps']['cache_page_map']['zoom'] = 8;
+// choose color according to https://developers.google.com/maps/documentation/static-maps/intro#Markers
+$config['maps']['cache_page_map']['marker_color'] = 'blue';
+
+/* Cache page minimap                                                       */
+$config['maps']['cache_mini_map']['zoom'] = 14;
+$config['maps']['cache_mini_map']['width'] = '480';
+$config['maps']['cache_mini_map']['height'] = '385'; 
+
+/* ************************************************************************
+ * External maps on which to view a cache 
+ * 
+ * The following parameters are available for replacement using 
+ * printf style syntax, in this order
+ *    1          2         3            4           5         6
+ * latitude, longitude, cache_id, cache_code, cache_name, link_text
+ *
+ * coordinates are float numbers (%f), the rest are strings (%s)
+ * cache_name is urlencoded
+ * escape % using %% (printf syntax)
+ * The level 3 key is also used as link_text.
+ *
+ * Use this to define URLs to external mapping sites to display a cache
+ * ************************************************************************ */
+
+/* Example:
+ * $config['maps']['external']['MyMap'] = 1; // 1 = enabled; 0 = disabled
+ * $config['maps']['external']['MyMap_URL'] = '<a href="http://site/file?lat=%1$f&lon=%2$f&id=%3$s&name=%5$s">%6$s</a>';
+ */
+$config['maps']['external']['Opencaching'] = 1;
+$config['maps']['external']['Opencaching_URL'] = '<a target="_blank" href="cachemap3.php?lat=%1$f&lon=%2$f&cacheid=%3$s&inputZoom=14">%6$s</a>';
+$config['maps']['external']['OSMapa'] = 1;
+$config['maps']['external']['OSMapa_URL'] = '<a target="_blank" href="http://osmapa.pl?zoom=16&lat=%1$f&lon=%2$f&z=14&o=TFFT&map=1">%6$s</a>';
+$config['maps']['external']['UMP'] = 1;
+$config['maps']['external']['UMP_URL'] = '<a target="_blank" href="http://mapa.ump.waw.pl/ump-www/?zoom=14&lat=%1$f&lon=%2$f&layers=B00000T&mlat=%1$f&mlon=%2$f">%6$s</a>';
+$config['maps']['external']['Google Maps'] = 1;
+$config['maps']['external']['Google Maps_URL'] = '<a target="_blank" href="//maps.google.com/maps?hl=UTF-8&q=%1$f+%2$f+(%5$s)" >%6$s</a>';
+$config['maps']['external']['Szukacz'] = 1;
+$config['maps']['external']['Szukacz_URL'] = '<a target="_blank" href="http://mapa.szukacz.pl/?n=%1$f&e=%2$f&z=4&t=Skrzynka%%20Geocache">%6$s</a>';
+$config['maps']['external']['Flopp\'s Map'] = 0;
+$config['maps']['external']['Flopp\'s Map_URL'] = '<a target="_blank" href="http://flopp.net/?c=%1$f:%2$f&z=16&t=OSM&f=g&m=&d=&g=%4$s">%6$s</a>'; 
 
 
 
@@ -280,9 +563,7 @@ $config = array(
     /** url where xml witch most recent blog enterie are placed */
     'blogMostRecentRecordsUrl' => 'http://blog.opencaching.pl/feed/',
     /** to switch cache map v2 on set true otherwise false */
-    'map2SwithedOn' => true,
-    /** to switch flopp's map on set true otherwise false */
-    'FloppSwithedOn' => false,
+
     /* === Node personalizations === */
 
     /** main logo picture (to be placed in /images/) */
@@ -301,73 +582,10 @@ $config = array(
      * mainly for MSIE
      */
     'headerFavicon' => 'oc_icon.png',
-    /** Language list for new caches */
-    'defaultLanguageList' => array(
-        'PL', 'EN', 'FR', 'DE', 'NL', 'RO'
-    ),
-    /** default country in user registration form */
-    'defaultCountry' => 'PL',
-    /* Enable referencing waypoints from other sites */
-    'otherSites_geocaching_com' => 1,
-    'otherSites_terracaching_com' => 1,
-    'otherSites_navicache_com' => 1,
-    'otherSites_gpsgames_org' => 1,
-    'otherSites_qualitycaching_com' => 0, // BeNeLux only
 
-    /**
-     * Minimum number of finds a user must have to see a cache's waypoint on
-     * another site.
-     */
-    'otherSites_minfinds' => 100,
-    /**
-     * not allowed cache types (user cannot create caches of this types).
-     *
-     * Cachetypes must be lib/cache.php constant TYPE_*
-     */
-    'forbidenCacheTypes' => array(
-        cache::TYPE_VIRTUAL,
-        cache::TYPE_WEBCAM,
-        cache::TYPE_GEOPATHFINAL
-    ),
-    /**
-     * cache limits for user. If user is allowed to place limited nomber of specified cache type,
-     * place cachetype and limit here.
-     *
-     * Cachetypes must be lib/cache.php constant TYPE_*
-     */
-    'cacheLimitByTypePerUser' => array(
-        cache::TYPE_OWNCACHE => 1,
-    ),
-    /**
-     * not allowed cache sizes (user cannot create caches of this sizes).
-     *
-     * Cachesizes must be lib/cache.php constant SIZE_*
-     */
-    'forbiddenCacheSizes' => array(
-        //cache::SIZE_MICRO
-    ),
-    /**
-     * If set to true, all database queries will be reported in the page
-     * output. (Note, that this will cause most of the AJAX actions to stop
-     * functioning properly.)
-     */
-    'debugDB' => true,
-    /** The filter fragment selecting provinces from nuts_codes table. */
-    'provinceNutsCondition' => '`code` like \'PL__\'',
     /**/
     'medalsModuleSwitchedOn' => true,
-    /** Nature2000 link - used in viewcache.php */
-    'nature2000link' => '<a style="color:blue;" target="_blank" href="http://obszary.natura2000.org.pl/index.php?s=obszar&amp;id={linkid}">{sitename}&nbsp;&nbsp;-&nbsp;&nbsp;{sitecode}</a>',
-    /** See settings-example.inc.php for explanation */
-    'mapsConfig' => array(
-        'OSM' => array(
-            'name' => 'OSM',
-            'attribution' => '&copy; <a href="http://www.openstreetmap.org/" target="_blank">OpenStreetMap</a> contributors <a href="http://creativecommons.org/licenses/by-sa/2.0/" target="_blank">CC BY-SA</a>',
-            'tileUrl' => 'http://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            'maxZoom' => 18,
-            'tileSize' => '256x256'
-        ),
-    ),
+
     /**
         *customization of cache-attribute icons
     */
@@ -383,19 +601,4 @@ $config = array(
     )
 );
 
-  /** Limit for uplading pictures per node. */
-
-// Image file size limit in MB
-$config['limits']['image']['filesize'] = 3.5;
-// Resize large images ? (1=yes; 0=no)
-$config['limits']['image']['resize'] = 1;
-// Image maximum width in pixels (aspect ratio preserved)
-$config['limits']['image']['width'] = 640;
-// Image maximum height in pixels (aspect ratio preserved)
-$config['limits']['image']['height'] = 640;
-// Image recommended size in pixels (for translations)
-$config['limits']['image']['pixels_text'] = '640 x 480';
-// Allowed extensions (image formats)
-$config['limits']['image']['extension'] = ';jpg;jpeg;gif;png;';
-$config['limits']['image']['extension_text'] = 'JPG, PNG, GIF';
-
+?>
