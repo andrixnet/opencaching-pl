@@ -32,13 +32,20 @@ $config['server']['db']['username'] = 'my_username';
 // database password. REQUIRED
 $config['server']['db']['password'] = 'my_password';
 
+// User persistent connection?
+$config['server']['db']['persistent'] = false;
+
+// Report database errors to this email
+// FIXME
+//$config['server']['db']['error_report'] = 'rt@localhost';
+
 // *** Paths **************************************************************
 
 // Document root for the PHP application. With trailing "/". REQUIRED.
 // (same as DocumentRoot directive in Apache httpd config)
 // Should be set explicitely as absolute path on hosting server.
 // Example: /path/to/opencaching-pl/
-$config['server']['path']['root'] = '/var/www//ocpl-root';
+$config['server']['path']['root'] = '/var/www/ocpl-root/';
 
 // The following are outside the application root path and must be defined
 // as aliased directories in Apache httpd config.
@@ -46,22 +53,36 @@ $config['server']['path']['root'] = '/var/www//ocpl-root';
 // Path to OC dynamic, outside the root path. REQUIRED
 $config['server']['path']['ocdynamic'] = '/var/www/ocpl-data/';
 // Path to OC admin, outside the root path. REQUIRED
+// Administrative scripts and data
 $config['server']['path']['ocadmin'] = '/var/www/ocpl-admin/';
+// Path to OC themes, outside the root path. REQUIRED
+$config['server']['path']['octheme'] = '/var/www/ocpl-themes/'; // not implemented yet
 
 // Safemode zip binary
 $config['server']['zip']['bin'] = '/var/www/ocpl/bin/phpzip.php';
 $config['server']['zip']['basedir'] = $config['server']['path']['ocdynamic'] . 'download/zip/';
 $config['server']['zip']['wwwdir'] = '/download/zip/';
 
+// Image file upload directory
+$config['server']['path']['images'] = $config['server']['path']['ocdynamic'] . 'images/uploads/';
+// Audio file upload directory
+$config['server']['path']['audio'] = $config['server']['path']['ocdynamic'] . 'mp3/';
+// Attachment file upload directory
+$config['server']['path']['attach'] = $config['server']['path']['ocdynamic'] . 'files/';
+
 // *** Debugging **********************************************************
 
-// Maintenance mode
-$config['debug']['maitenance'] = false;
+// Site in maintenance mode
+$config['debug']['maintenance'] = false;
+
+// Overall debug flag
+$config['debug']['general'] = false;
+// Debug individual page
+$config['debug']['page'] = false;
 // Debug level
 $config['debug']['output_level'] = '';
-//
-$config['debug']['general'] == false;
-$config['debug']['page'] = false;
+// Under development warning message
+$config['debug']['devel_warning'] = '';
 /*
  * If set to true, all database queries will be reported in the page
  * output. (Note, that this will cause most of the AJAX actions to stop
@@ -80,18 +101,10 @@ if (!isset($debug_page))
     $debug_page = false;
 if (!isset($debug))
     $debug = false;
-$develwarning = '';
 
-//site in service? Set to false when doing bigger work on the database to prevent error's
-// reverse this setting with value above
-if (!isset($site_in_service))
-    $site_in_service = true;
-*/
 
 // *** FIXME??? ***********************************************************
 /*
-$dbpconnect = false;
-
 $tmpdbname = 'test';
 
 // warnlevel for sql-execution
@@ -101,6 +114,9 @@ $sql_warntime = 1;
 // replacements for sql()
 $sql_replacements['db'] = $dbname;
 $sql_replacements['tmpdb'] = 'test';
+
+// enable detailed cache access logging
+//$enable_cache_access_logs = true;
 
 */
 
@@ -116,12 +132,14 @@ $sql_replacements['tmpdb'] = 'test';
 // Node ID. REQUIRED.
 // Use 4 for local development.
 // See /docs/oc_nodes.txt for existing node IDs and how to obtain an ID.
+// FIXME with opencaching.eu Wiki
 $config['node']['id'] = 4;
 // Website host name. REQUIRED
 $config['node']['hostname'] = 'localhost';
 // Website domain name. REQUIRED
 $config['node']['domainname'] = 'localdomain';
 // Change if necessary. (ie. using https)
+// FIXME: proper handling when switch over to https?
 $config['node']['proto'] = 'http://';
 // Webside URL. With trailing "/". REQUIRED.
 $config['node']['url'] = $config['node']['proto'] . $config['node']['hostname'] . '.' . $config['node']['domainname'] . '/';
@@ -136,6 +154,12 @@ $config['node']['title'] = 'Opencaching website';
 // Use 2 upper case letters only (from english 26 letter character set).
 // Preferrably starting with "O"
 $config['node']['waypoint_prefix'] = 'OX';
+
+// Uploads
+// Must be aliased in webserver config
+$config['node']['upload']['images'] = $config['node']['url'] . 'images/uploads';
+$config['node']['upload']['audio'] = $config['node']['url'] . 'mp3';
+$config['node']['upload']['files'] = $config['node']['url'] . 'files';
 
 // *** Contact information ************************************************
 
@@ -156,7 +180,7 @@ $config['node']['mail']['from'] = 'opencaching.pl';
 // Must configure in email subsystem as sink to /dev/null
 $config['node']['mail']['noreply'] = 'noreply@opencaching.pl';
 // Signature for server generated emails
-$config['node']['mail']['signiture'] = "Pozdrawiamy, Zesp├│┼é www.opencaching.pl";
+$config['node']['mail']['signiture'] = 'Pozdrawiamy, Zespół www.opencaching.pl';
 // Watchlist email sender for server generated emails. 
 $config['node']['mail']['watchlist'] = 'watch@opencaching.pl';
 
@@ -173,8 +197,21 @@ $config['node']['cookie']['domain'] = '.' . $config['node']['domainname'];
 $config['node']['styles']['stylename'] = 'stdstyle';
 // Template
 $config['node']['styles']['template'] = $config['server']['path']['ocdynamic'] . 'tpl/' . $config['node']['styles']['stylename'] . '/html/'; // not implemented yet
+
 // Header
 $config['node']['styles']['header'] = '__standard_header_images_set'; // not implemented yet
+// Page header logo filename 
+$config['node']['styles']['header_logo'] = 'oc_logo.png'; 
+// winter version, displayed during december and january.
+$config['node']['styles']['header_logo']['winter'] = 'oc_logo_winter.png';
+// april fools version, displayed only on april 1st. 
+$config['node']['styles']['header_logo']['1april'] = 'oc_logo_1A.png'; 
+// website icon filename
+// Format: 16x16 pixels; PNG 8bit indexed or 24bit true color, transparency supported
+// A file generic /favicon.ico (windows icon ICO format, 16x16) should also exist as 
+// fallback mainly for MSIE
+$config['node']['styles']['favicon'] = 'oc_icon.png';
+
 // Icons
 $config['node']['styles']['icons'] = '__standard_icons_set'; // not implemented yet
 // Flags
@@ -183,6 +220,8 @@ $config['node']['styles']['flags'] = '__standard_flags_set'; // not implemented 
 $config['node']['styles']['caches'] = '__standard_caches_set'; // not implemented yet
 // Attributes
 $config['node']['styles']['attributes'] = '__standard_attributes_set'; // not implemented yet
+
+
 
 // *** Feature personalization ********************************************
 
@@ -254,7 +293,8 @@ $config['node']['api']['google']['translation'] = false;
 // Garmin keys are tied to your website URL
 // Make sure you generate your API key using your website URL with trailing "/"
 $config['node']['api']['garmin']['key'] = ''; // <-- insert your API key here
-$config['node']['api']['garmin']['url'] = $config['node']['url'];
+// Enter your node URL as registered with Garmin
+$config['node']['api']['garmin']['url'] = 'http://node_url_as_registered';
 
 // *** GeoKrety API *******************************************************
 
@@ -299,24 +339,34 @@ $config['oc']['other']['gpsgames_com'] = 1;
 $config['oc']['other']['qualitycaching_com'] = 0; // BeNeLux only
 
 // Cache types that are not allowed to be publised
-// Cachetypes must be lib/cache.php constant TYPE_*
+// Cachetypes must be in lib/cache.php constant TYPE_*
 $config['oc']['rules']['forbidden_cache_types'] = array(
         cache::TYPE_VIRTUAL,
         cache::TYPE_WEBCAM,
         cache::TYPE_GEOPATHFINAL
     );
 // How many caches of these types can be published by one user  
-// Cachetypes must be lib/cache.php constant TYPE_*
+// Cachetypes must be in lib/cache.php constant TYPE_*
 // Place cachetype and limit here.  
-$config['oc']['rules']['owncache'] = array(
-        cache::TYPE_OWNCACHE => 1,
+$config['oc']['rules']['cache_type_limits'] = array(
+        cache::TYPE_OWNCACHE => $config['oc']['rules']['own_caches'],
     );
 // Cache sizes that are not allowed to be published    
-// Cachesizes must be lib/cache.php constant SIZE_*
+// Cachesizes must be in lib/cache.php constant SIZE_*
 $config['oc']['rules']['forbidden_cache_sizes'] = array(
         //cache::SIZE_MICRO
     );
-
+// Attributes that are not allowed to be published    
+// Attributes must be inb lib/attribute.php constant ATTR_*
+$config['oc']['rules']['forbidden_attributes'] = array(
+        //attrib::ATTR_HORSES
+    );
+    
+// Warn owner of disabled caches every X months
+$config['oc']['rules']['warn_disable'] = 1;
+// Archive caches if disabled for more then X months
+$config['oc']['rules']['archive_disable'] = 6;
+   
 // *** Rewards ************************************************************
 
 // Titled caches
@@ -326,9 +376,112 @@ $config['oc']['titled_cache']['prefix'] = 'week';
 
 
 /* ************************************************************************
+ * Modules
+ * Activate and configure modules.
+ */
+
+// *** QR code generator **************************************************
+$config['module']['qr_code']['enabled'] = true;
+// Sample URL for QR code generation
+$config['module']['qr_code']['sample'] = 'http://opencaching.pl/OP3C90';
+// Display basic QR code (without template)?
+$config['module']['qr_code']['basic'] = true;
+// Directory with template files for QR code labels
+$config['module']['qr_code']['templates'] = 'path/to/templates';
+
+// ^^^ the above removes 'qrCodeLogo' and 'qrCodeUrl' settings and assumes
+// an improvement of QR module according to
+// https://github.com/opencaching/opencaching-pl/issues/41
+
+// *** Shop ***************************************************************
+$config['module']['shop']['enabled'] = false;
+$config['module']['shop']['url'] = 'http://www.shop_of_your_choice/';
+
+// *** Online users *******************************************************
+$config['module']['online_users']['enabled'] = true;
+
+// *** Blog ***************************************************************
+$config['module']['blog']['enabled'] = true;
+// Blog site URL
+$config['module']['blog']['url'] = 'http://blog.opencaching.pl/';
+// url of RSS feed with most recent blog entries
+$config['module']['blog']['feed'] = 'http://blog.opencaching.pl/feed/'
+
+// *** Forum **************************************************************
+$config['module']['forum']['enabled'] = true;
+// Forum site URL
+$config['module']['forum']['url'] = 'http://forum.opencaching.pl';
+
+// *** Wiki ***************************************************************
+$config['module']['wiki']['enabled'] = true;
+// Wiki site URL
+$config['module']['wiki']['url'] = 'http://wiki.opencaching.pl/';
+// Wiki links specifically needed to be referenced
+// 
+$config['module']['wiki']['links']['main'] = 'index.php/Strona_główna';
+$config['module']['wiki']['links']['rules'] = 'index.php/Regulamin_OC_PL';
+$config['module']['wiki']['links']['rules_en'] = 'index.php/OC_PL_Conditions_of_Use';
+$config['module']['wiki']['links']['cacheParams'] = 'index.php/Parametry_skrzynki';
+$config['module']['wiki']['links']['cacheParams_en'] = 'index.php/Cache_parameters';
+$config['module']['wiki']['links']['ratingDesc'] = 'index.php/Oceny_skrzynek';
+$config['module']['wiki']['links']['ratingDesc_en'] = 'index.php/Cache_rating';
+$config['module']['wiki']['links']['forBeginers'] = 'index.php/Dla_początkujących';
+$config['module']['wiki']['links']['placingCache'] = 'index.php/Zakładanie_skrzynki';
+// duplicate 'makingCaches' should be resolved
+$config['module']['wiki']['links']['cacheQuality'] = 'index.php/Jakość_skrzynki';
+// duplicate 'makingRoutes' should be resolved
+$config['module']['wiki']['links']['myRoutes'] = 'index.php/Moje_trasy';
+$config['module']['wiki']['links']['cacheNotes'] = 'index.php/Notatki_skrzynki';
+// duplicate 'extraWaypoints' should be resolved
+$config['module']['wiki']['links']['additionalWaypoints'] = 'index.php/Dodatkowe_waypointy_w_skrzynce';
+$config['module']['wiki']['links']['cachingCode'] = 'index.php/Kodeks_geocachera';
+$config['module']['wiki']['links']['usefulFiles'] = 'index.php/U%C5%BCyteczne_pliki_zwi%C4%85zane_z_OC_PL';
+$config['module']['wiki']['links']['ocSiteRules'] = 'index.php/Zasady_funkcjonowania_Serwisu_OC_PL';
+$config['module']['wiki']['links']['cacheTypes'] = 'index.php/Typ_skrzynki';
+$config['module']['wiki']['links']['cacheAttrib'] = 'index.php/Parametry_skrzynki#Atrybuty_skrzynki';
+$config['module']['wiki']['links']['cacheAttrib_en'] = 'index.php/Cache_parameters#Attributes';
+$config['module']['wiki']['links']['cacheLogPass'] = 'index.php/Parametry_skrzynki#Has.C5.82o_do_wpisu_do_Logu';
+$config['module']['wiki']['links']['downloads'] = 'index.php/U%C5%BCyteczne_pliki_zwi%C4%85zane_z_OC_PL';
+$config['module']['wiki']['links']['extraWaypoints'] = 'index.php/Dodatkowe_waypointy_w_skrzynce';
+
+// *** Medals *************************************************************
+$config['module']['medals']['enabled'] = true;
+
+// *** GeoPaths ***********************************************************
+$config['module']['GeoPath']['enabled'] = true;
+// User must have at least X finds to create a GeoPath
+$config['module']['GeoPath']['create_min_finds'] = 500;
+$config['module']['GeoPath']['min_caches']['current'] = 25;
+$config['module']['GeoPath']['min_caches']['old'][1] = array(
+    'dateFrom' => '1970-01-01 01:00',
+    'dateTo' => '2013-10-29 23:59:59',
+    'limit' => 5,
+);
+// To change the limit in the future, uncomment this:
+/*
+$config['module']['GeoPath']['min_caches']['old'][2] = array(
+    'dateFrom' => '2013-10-30 00:00:00',
+    'dateTo' => '20??-??-?? 23:59:59',
+    'limit' => 25,
+);
+*/
+// User documentation
+// FIXME: should be moved to Wiki
+$config['module']['GeoPath']['docs'] = 'http://info.opencaching.pl/node/13';
+
+
+
+/* ************************************************************************
  * Limits
  * Change only if your node's limits differ from the defaults.
  */
+
+// *** Thumbnails *********************************************************
+
+// Large thumbnails, default 175x175
+$config['limits']['thumb']['large'] = 175;
+// Small thumbnails, default 64x64
+$config['limits']['thumb']['small'] = 64;
 
 // *** Image uploads ******************************************************
 
@@ -377,7 +530,7 @@ $config['limits']['attach']['extension_text'] = 'PDF, GWC, GPX, KML';
  */
 
 // mapper module for cache maps
-$config['maps']['mapper'] = "lib/mapper_okapi.php";  
+$config['maps']['mapper'] = 'lib/mapper_okapi.php';  
 
 // cache map v2
 $config['maps']['mapv2'] = true;
@@ -387,7 +540,7 @@ $config['maps']['mapv3'] = true;
 $config['maps']['flopp'] = true;
 
 // default coordinates for cachemap, set to your country's center of gravity
-$config['maps']['country']['coords'] = "52.5,19.2";
+$config['maps']['country']['coords'] = '52.5,19.2';
 // zoom level at which your whole country/region is shown on map
 $config['maps']['country']['zoom'] = 6;
 
@@ -545,47 +698,33 @@ $config['maps']['external']['Flopp\'s Map_URL'] = '<a target="_blank" href="http
 
 
 
+// ????????????????????????????????????????????????????????????????????????
+// FIXME
+// This should be moved to UI according to 
+// https://github.com/opencaching/opencaching-pl/issues/299
+
+// $contactDataXX 
+
+// ????????????????????????????????????????????????????????????????????????
+// FIXME
+// This should be removed according to
+// https://github.com/opencaching/opencaching-pl/issues/167
+// $use_news_approving = true;
+// $news_approver_email = 'rr@localhost';
+
+// ????????????????????????????????????????????????????????????????????????
+// FIXME
+// This should be removed according to
+// https://github.com/opencaching/opencaching-pl/issues/167
+// user_id of admin who have more options than COG users to remove all logs or other more options in admin_users.php
+//$super_admin_id = '';
 
 
-
-
-
-
-
+// ????????????????????????????????????????????????????????????????????????
+// FIXME
+// this should be moved to attributes definition
 
 $config = array(
-    /**
-     *Add button to a shop. Set true otherwise false
-     *Add link to the shop of choise.
-     */
-    'showShopButton' => false,
-    'showShopButtonUrl' => 'http://www.shop of choise',
-    /** url where xml witch most recent blog enterie are placed */
-    'blogMostRecentRecordsUrl' => 'http://blog.opencaching.pl/feed/',
-    /** to switch cache map v2 on set true otherwise false */
-
-    /* === Node personalizations === */
-
-    /** main logo picture (to be placed in /images/) */
-    'headerLogo' => 'oc_logo.png',
-    /** main logo; winter version, displayed during december and january. */
-    'headerLogoWinter' => 'oc_logo_winter.png',
-    /** main logo; prima aprilis version (april fools), displayed only on april 1st. */
-    'headerLogo1stApril' => 'oc_logo_1A.png',
-    /** qrcode logo: show qrcode image and link the prefered way.  */
-    'qrCodeLogo' => 'qrcode_bg.jpg',
-    'qrCodeUrl' => 'http://opencaching.pl/viewcache.php?wp=OP3C90',
-    /**
-     * website icon (favicon); (to be placed in /images/)
-     * Format: 16x16 pixels; PNG 8bit indexed or 24bit true color, transparency supported
-     * A file /favicon.ico (windows icon ICO format, 16x16) should also exist as fallback
-     * mainly for MSIE
-     */
-    'headerFavicon' => 'oc_icon.png',
-
-    /**/
-    'medalsModuleSwitchedOn' => true,
-
     /**
         *customization of cache-attribute icons
     */
