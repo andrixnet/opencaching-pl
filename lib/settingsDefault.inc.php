@@ -380,6 +380,13 @@ $config['oc']['titled_cache']['prefix'] = 'week';
  * Activate and configure modules.
  */
 
+// *** OpenChecker ********************************************************
+$config['module']['openchecker']['enabled'] = true;
+// Limit number of checks
+$config['module']['openchecker']['limit'] = 10;
+// Time period for checks limit (minutes)
+$config['module']['openchecker']['time'] = 60;
+
 // *** QR code generator **************************************************
 $config['module']['qr_code']['enabled'] = true;
 // Sample URL for QR code generation
