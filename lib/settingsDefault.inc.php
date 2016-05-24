@@ -386,6 +386,8 @@ $config['module']['openchecker']['enabled'] = true;
 $config['module']['openchecker']['limit'] = 10;
 // Time period for checks limit (minutes)
 $config['module']['openchecker']['time'] = 60;
+// Pagination - how many caches per page
+$config['module']['openchecker']['page'] = 25;
 
 // *** QR code generator **************************************************
 $config['module']['qr_code']['enabled'] = true;
