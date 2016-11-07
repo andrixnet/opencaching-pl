@@ -1,0 +1,87 @@
+Titled Cache
+============
+
+Technical description
+---------------------
+
+    Activating the module:
+    - in settings.ini.php:
+
+// Set renewal interval (ie year, month, week)
+$titled_cache_period_prefix = 'month';
+// Set number of finds (default 10)
+$titled_cache_nr_found = 10;
+
+    - add crontab entry
+
+# command: cache_titled_add.php?CRON
+# set up the cron job according to the desired period
+# MIN HOUR DAY MONTH DAYOFWEEK  COMMAND
+15 4 * * 5 /path/to/do-wget-url cache_titled_add.php?CRON cache_titled.html
+
+Example above runs at 4:14AM, every saturday (5th day of the week).
+
+How it works
+============
+
+    cache_titled_add.php implements an algorithm to choose the best cache
+among the possible candidates.
+- The ID of the best cache is written into the `cache_titled` table.
+- A congratulation email is sent to the owner of the cache
+Note: this text must exist in the proper language file, item
+'(month)(week)_titled_cache_congratulations'
+
+Homepage
+--------
+
+    The website homepage will contain a section `Cache of the ...` showing
+the currently selected cache.
+
+My neighborhood
+---------------
+
+    The page `My neighborhood` under User's menu will contain a list of up to 10
+titled caches that are in the user's neighborhood.
+
+Medals
+------
+
+    Each titled cache earns a medal.
+    The medal appears on the cache page and also next to the cache name in 
+the balloon info on map v3.
+
+Algorithm description
+=====================
+
+    Phase I
+-----------
+
+    ration = recommendations/number of visits
+    wsk = ratio - (length of life / 5000)
+
+    The following criteria are used:
+    - cache is active
+    - cache is not an event
+    - cache has not been chosen before (as titled cache)
+    - has 10 or more finds (according to $titled_cache_nr_found)
+
+    Candidates are sorted according to:
+    - wsk (descending)
+    - number of finds (descending)
+    - date created (descending)
+
+    Top 30 results are stored in a temporary table, along with region information.
+
+
+    Phase II
+------------
+
+    Top 30 candidates are resorted according to:
+
+    - Region (ascending) - number of chosen caches per region
+    - number of finds (descending)
+    - date created (ascending)
+    - wsk (descending)
+
+    First cache in this list is elected as current `Titled cache` or
+"cache of the ..."
