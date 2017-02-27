@@ -420,10 +420,6 @@ class GeoCache extends GeoCacheCommons
         return $this->isPowerTrailPart;
     }
 
-
-
-
-
     /**
      * perform update on specified elements only.
      * @param array $elementsToUpdate

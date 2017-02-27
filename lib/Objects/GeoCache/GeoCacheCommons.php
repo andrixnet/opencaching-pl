@@ -28,14 +28,14 @@ class GeoCacheCommons{
     const STATUS_NOTYETAVAILABLE = 5;
     const STATUS_BLOCKED = 6;
 
-    const SIZE_NONE = 7;
-    const SIZE_NANO = 8;
-    const SIZE_MICRO = 2;
-    const SIZE_SMALL = 3;
-    const SIZE_REGULAR = 4;
-    const SIZE_LARGE = 5;
-    const SIZE_XLARGE = 6;
-    const SIZE_OTHER = 1;
+    const SIZE_OTHER 	= 1;
+    const SIZE_MICRO 	= 2;
+    const SIZE_SMALL 	= 3;
+    const SIZE_REGULAR 	= 4;
+    const SIZE_LARGE 	= 5;
+    const SIZE_XLARGE 	= 6;
+    const SIZE_NONE 	= 7;
+    const SIZE_NANO 	= 8;
 
     const RECOMENDATION_RATIO = 10; //percentage of founds which can be recomeded by user
 

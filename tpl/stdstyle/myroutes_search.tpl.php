@@ -2,131 +2,130 @@
 
 ?>
 <script type="text/javascript">
-    var mnAttributesShowCat2 = 1;
-    var maAttributes = new Array({attributes_jsarray});
+var mnAttributesShowCat2 = 1;
+var maAttributes = new Array({attributes_jsarray});
 
-    function check_recommendations() {
-        if (document.optionsform.cache_rec[1].checked == true) {
-            if (isNaN(document.optionsform.cache_min_rec.value)) {
-                alert("Minimalna ilość rekomendacji musi być cyfrą!");
-                return false;
-            } else if (document.optionsform.cache_min_rec.value <= 0 || document.optionsform.cache_min_rec.value > 999) {
-                alert("Dozwolona wartość minimalnej ilości rekomendacji musi być z zakresu: 0 - 999");
-                return false;
-            }
+function check_recommendations() {
+    if (document.optionsform.cache_rec[1].checked == true) {
+        if (isNaN(document.optionsform.cache_min_rec.value)) {
+            alert("{{route_06}}");
+            return false;
+        } else if (document.optionsform.cache_min_rec.value <= 0 || document.optionsform.cache_min_rec.value > 999) {
+            alert("{{route_07}}");
+            return false;
         }
-        return true;
+    }
+    return true;
+}
+
+function sync_options(element) {
+
+    var tmpattrib = "";
+    for (i = 0; i < maAttributes.length; i++)
+        if (maAttributes[i][1] == 1)
+            tmpattrib = '' + tmpattrib + maAttributes[i][0] + ';';
+    if (tmpattrib.length > 0)
+        tmpattrib = tmpattrib.substr(0, tmpattrib.length - 1);
+
+    var tmpattrib_not = "";
+    for (i = 0; i < maAttributes.length; i++)
+        if (maAttributes[i][1] == 2)
+            tmpattrib_not = '' + tmpattrib_not + maAttributes[i][0] + ';';
+    if (tmpattrib_not.length > 0)
+        tmpattrib_not = tmpattrib_not.substr(0, tmpattrib_not.length - 1);
+
+    var recommendations = 0;
+    if (document.forms['optionsform'].cache_rec[0].checked == true) {
+        document.forms['optionsform'].cache_min_rec.disabled = 'disabled';
+        recommendations = 0;
+    }
+    else if (document.forms['optionsform'].cache_rec[1].checked == true) {
+        document.forms['optionsform'].cache_min_rec.disabled = false;
+        recommendations = document.forms['optionsform'].cache_min_rec.value;
+    }
+    document.optionsform.cacherating.value = recommendations;
+    document.forms['optionsform'].f_inactive.value = document.optionsform.f_inactive.checked ? 1 : 0;
+    document.forms['optionsform'].f_ignored.value = document.optionsform.f_ignored.checked ? 1 : 0;
+    document.forms['optionsform'].f_userfound.value = document.optionsform.f_userfound.checked ? 1 : 0;
+    document.forms['optionsform'].f_userowner.value = document.optionsform.f_userowner.checked ? 1 : 0;
+
+    document.forms['optionsform'].cachetype1.value = document.optionsform.cachetype1.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype2.value = document.optionsform.cachetype2.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype3.value = document.optionsform.cachetype3.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype4.value = document.optionsform.cachetype4.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype5.value = document.optionsform.cachetype5.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype6.value = document.optionsform.cachetype6.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype7.value = document.optionsform.cachetype7.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype8.value = document.optionsform.cachetype8.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype9.value = document.optionsform.cachetype9.checked ? 1 : 0;
+    document.forms['optionsform'].cachetype10.value = document.optionsform.cachetype10.checked ? 1 : 0;
+
+    document.forms['optionsform'].cachesize_1.value = document.optionsform.cachesize_1.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_2.value = document.optionsform.cachesize_2.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_3.value = document.optionsform.cachesize_3.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_4.value = document.optionsform.cachesize_4.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_5.value = document.optionsform.cachesize_5.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_6.value = document.optionsform.cachesize_6.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_7.value = document.optionsform.cachesize_7.checked ? 1 : 0;
+    document.forms['optionsform'].cachesize_8.value = document.optionsform.cachesize_8.checked ? 1 : 0;
+
+    document.forms['optionsform'].cachevote_1.value = document.optionsform.cachevote_1.value;
+    document.forms['optionsform'].cachevote_2.value = document.optionsform.cachevote_2.value;
+
+    document.forms['optionsform'].cachenovote.value = document.optionsform.cachenovote.checked ? 1 : 0;
+
+    document.forms['optionsform'].cachedifficulty_1.value = document.optionsform.cachedifficulty_1.value;
+    document.forms['optionsform'].cachedifficulty_2.value = document.optionsform.cachedifficulty_2.value;
+
+    document.forms['optionsform'].cacheterrain_1.value = document.optionsform.cacheterrain_1.value;
+    document.forms['optionsform'].cacheterrain_2.value = document.optionsform.cacheterrain_2.value;
+
+    document.forms['optionsform'].cache_attribs.value = tmpattrib;
+    document.forms['optionsform'].cache_attribs_not.value = tmpattrib_not;
+
+}
+
+function switchAttribute(id) {
+    var attrImg = document.getElementById("attrimg" + id);
+    var nArrayIndex = 0;
+
+    for (nArrayIndex = 0; nArrayIndex < maAttributes.length; nArrayIndex++) {
+        if (maAttributes[nArrayIndex][0] == id)
+            break;
     }
 
-    function sync_options(element)
-    {
-
-        var tmpattrib = "";
-        for (i = 0; i < maAttributes.length; i++)
-            if (maAttributes[i][1] == 1)
-                tmpattrib = '' + tmpattrib + maAttributes[i][0] + ';';
-        if (tmpattrib.length > 0)
-            tmpattrib = tmpattrib.substr(0, tmpattrib.length - 1);
-
-        var tmpattrib_not = "";
-        for (i = 0; i < maAttributes.length; i++)
-            if (maAttributes[i][1] == 2)
-                tmpattrib_not = '' + tmpattrib_not + maAttributes[i][0] + ';';
-        if (tmpattrib_not.length > 0)
-            tmpattrib_not = tmpattrib_not.substr(0, tmpattrib_not.length - 1);
-
-        var recommendations = 0;
-        if (document.forms['optionsform'].cache_rec[0].checked == true) {
-            document.forms['optionsform'].cache_min_rec.disabled = 'disabled';
-            recommendations = 0;
-        }
-        else if (document.forms['optionsform'].cache_rec[1].checked == true) {
-            document.forms['optionsform'].cache_min_rec.disabled = false;
-            recommendations = document.forms['optionsform'].cache_min_rec.value;
-        }
-        document.optionsform.cacherating.value = recommendations;
-        document.forms['optionsform'].f_inactive.value = document.optionsform.f_inactive.checked ? 1 : 0;
-        document.forms['optionsform'].f_ignored.value = document.optionsform.f_ignored.checked ? 1 : 0;
-        document.forms['optionsform'].f_userfound.value = document.optionsform.f_userfound.checked ? 1 : 0;
-        document.forms['optionsform'].f_userowner.value = document.optionsform.f_userowner.checked ? 1 : 0;
-
-        document.forms['optionsform'].cachetype1.value = document.optionsform.cachetype1.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype2.value = document.optionsform.cachetype2.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype3.value = document.optionsform.cachetype3.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype4.value = document.optionsform.cachetype4.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype5.value = document.optionsform.cachetype5.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype6.value = document.optionsform.cachetype6.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype7.value = document.optionsform.cachetype7.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype8.value = document.optionsform.cachetype8.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype9.value = document.optionsform.cachetype9.checked ? 1 : 0;
-        document.forms['optionsform'].cachetype10.value = document.optionsform.cachetype10.checked ? 1 : 0;
-
-        document.forms['optionsform'].cachesize_2.value = document.optionsform.cachesize_2.checked ? 1 : 0;
-        document.forms['optionsform'].cachesize_3.value = document.optionsform.cachesize_3.checked ? 1 : 0;
-        document.forms['optionsform'].cachesize_4.value = document.optionsform.cachesize_4.checked ? 1 : 0;
-        document.forms['optionsform'].cachesize_5.value = document.optionsform.cachesize_5.checked ? 1 : 0;
-        document.forms['optionsform'].cachesize_6.value = document.optionsform.cachesize_6.checked ? 1 : 0;
-        document.forms['optionsform'].cachesize_7.value = document.optionsform.cachesize_7.checked ? 1 : 0;
-        document.forms['optionsform'].cachevote_1.value = document.optionsform.cachevote_1.value;
-        document.forms['optionsform'].cachevote_2.value = document.optionsform.cachevote_2.value;
-        document.forms['optionsform'].cachenovote.value = document.optionsform.cachenovote.checked ? 1 : 0;
-        document.forms['optionsform'].cachedifficulty_1.value = document.optionsform.cachedifficulty_1.value;
-        document.forms['optionsform'].cachedifficulty_2.value = document.optionsform.cachedifficulty_2.value;
-        document.forms['optionsform'].cacheterrain_1.value = document.optionsform.cacheterrain_1.value;
-        document.forms['optionsform'].cacheterrain_2.value = document.optionsform.cacheterrain_2.value;
-        document.forms['optionsform'].cache_attribs.value = tmpattrib;
-        document.forms['optionsform'].cache_attribs_not.value = tmpattrib_not;
-
+    if (maAttributes[nArrayIndex][1] == 0) {
+        attrImg.src = maAttributes[nArrayIndex][3];
+        maAttributes[nArrayIndex][1] = 1;
+    }
+    else if (maAttributes[nArrayIndex][1] == 1) {
+        attrImg.src = maAttributes[nArrayIndex][4];
+        maAttributes[nArrayIndex][1] = 2;
+    }
+    else if (maAttributes[nArrayIndex][1] == 2) {
+        attrImg.src = maAttributes[nArrayIndex][5];
+        maAttributes[nArrayIndex][1] = 0;
     }
 
-    function switchAttribute(id)
-    {
-        var attrImg = document.getElementById("attrimg" + id);
-        var nArrayIndex = 0;
+    sync_options(null);
+}
 
-        for (nArrayIndex = 0; nArrayIndex < maAttributes.length; nArrayIndex++)
-        {
-            if (maAttributes[nArrayIndex][0] == id)
-                break;
-        }
+function hideAttributesCat2() {
+    mnAttributesShowCat2 = 0;
+    document.getElementById('attributesCat2').style.display = "none";
+}
 
-        if (maAttributes[nArrayIndex][1] == 0)
-        {
-            attrImg.src = maAttributes[nArrayIndex][3];
-            maAttributes[nArrayIndex][1] = 1;
-        }
-        else if (maAttributes[nArrayIndex][1] == 1)
-        {
-            attrImg.src = maAttributes[nArrayIndex][4];
-            maAttributes[nArrayIndex][1] = 2;
-        }
-        else if (maAttributes[nArrayIndex][1] == 2)
-        {
-            attrImg.src = maAttributes[nArrayIndex][5];
-            maAttributes[nArrayIndex][1] = 0;
-        }
+function showAttributesCat2() {
+    mnAttributesShowCat2 = 1;
+    document.getElementById('attributesCat2').style.display = "block";
+}
 
-        sync_options(null);
-    }
-    function hideAttributesCat2()
-    {
-        mnAttributesShowCat2 = 0;
-        document.getElementById('attributesCat2').style.display = "none";
-    }
-
-    function showAttributesCat2()
-    {
-        mnAttributesShowCat2 = 1;
-        document.getElementById('attributesCat2').style.display = "block";
-    }
-
-    function switchCat2()
-    {
-        if (mnAttributesShowCat2 != 0)
-            hideAttributesCat2();
-        else
-            showAttributesCat2();
-    }
+function switchCat2() {
+    if (mnAttributesShowCat2 != 0)
+        hideAttributesCat2();
+    else
+        showAttributesCat2();
+}
 </script>
 
 

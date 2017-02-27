@@ -102,7 +102,9 @@ $config = array(
      * Cachesizes must be lib/cache.php constant SIZE_*
      */
     'forbiddenCacheSizes' => array(
-        //cache::SIZE_MICRO
+	cache::SIZE_NANO,
+	cache::SIZE_OTHER,
+        //cache::SIZE_MICRO,
     ),
     /** The filter fragment selecting provinces from nuts_codes table. */
     'provinceNutsCondition' => '`code` like \'PL__\'',
