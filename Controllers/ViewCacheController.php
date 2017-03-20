@@ -548,7 +548,7 @@ class ViewCacheController extends BaseController
         $this->view->setVar('externalMaps', $externalMaps);
 
         $zoom = $config['maps']['cache_page_map']['zoom'];
-        $mapType = $config['maps']['cache_page_map']['layer'];
+        $mapType = $config['maps']['cache_page_map']['source'];
 
         $this->view->setVar('mapImgLink', "lib/staticmap.php?center=$lat,$lon&amp;zoom=$zoom&amp;size=170x170&amp;maptype=$mapType&amp;markers=$lat,$lon,mark-small-blue");
 

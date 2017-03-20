@@ -517,9 +517,12 @@ $disable_google_translation = false;
  * Cache page mini map
  * ************************************************************************ */
 
-/* Cache page small map, fixed, clickable to open minimap.                  */
-// available options are roadmap, terrain, map, satellite, hybrid
-$config['maps']['cache_page_map']['layer'] = 'terrain';
+/* Cache page static map, clickable to open minimap.                        */
+/* available options are:
+    mapnik (OpenStreetMap) (default)
+    sterrain, stoner (Stamen)
+    cycle (OpenCycleMap)                                                    */
+$config['maps']['cache_page_map']['source'] = 'mapnik';
 $config['maps']['cache_page_map']['zoom'] = 8;
 // choose color according to https://developers.google.com/maps/documentation/static-maps/intro#Markers
 $config['maps']['cache_page_map']['marker_color'] = 'blue';
