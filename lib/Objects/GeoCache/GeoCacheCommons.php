@@ -86,7 +86,7 @@ class GeoCacheCommons{
             case self::SIZE_NONE:   return 'cacheSize_none';
             default:
                 error_log(__METHOD__ . ' Unknown cache sizeId: ' . $sizeId);
-                return 'size_04';
+                return self::SIZE_OTHER;
         }
     }
 
@@ -94,13 +94,13 @@ class GeoCacheCommons{
     {
         return array(
             self::SIZE_NONE,
-            //self::SIZE_NANO,
+            self::SIZE_NANO,
             self::SIZE_MICRO,
             self::SIZE_SMALL,
             self::SIZE_REGULAR,
             self::SIZE_LARGE,
             self::SIZE_XLARGE,
-            //self::SIZE_OTHER
+            self::SIZE_OTHER
         );
     }
 

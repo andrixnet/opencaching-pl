@@ -57,43 +57,6 @@ final class cache
             'translation' => 'cacheStatus_6',
         ),
     );
-<<<<<<< 6be5cf83d0f967f348cd2e4368541fcbdc3ea05e
-=======
-    private $size = array(
-        self::SIZE_OTHER => array(
-            'id' => self::SIZE_OTHER,
-            'translation' => 'cacheSize_1',
-        ),
-        self::SIZE_MICRO => array(
-            'id' => self::SIZE_MICRO,
-            'translation' => 'cacheSize_2',
-        ),
-        self::SIZE_SMALL => array(
-            'id' => self::SIZE_SMALL,
-            'translation' => 'cacheSize_3',
-        ),
-        self::SIZE_NORMAL => array(
-            'id' => self::SIZE_NORMAL,
-            'translation' => 'cacheSize_4',
-        ),
-        self::SIZE_LARGE => array(
-            'id' => self::SIZE_LARGE,
-            'translation' => 'cacheSize_5',
-        ),
-        self::SIZE_VERYLARGE => array(
-            'id' => self::SIZE_VERYLARGE,
-            'translation' => 'cacheSize_6',
-        ),
-        self::SIZE_NOCONTAINER => array(
-            'id' => self::SIZE_NOCONTAINER,
-            'translation' => 'cacheSize_7',
-        ),
-        self::SIZE_NANO => array(
-            'id' => self::SIZE_NANO,
-            'translation' => 'cacheSize_8',
-        ),
-    );
->>>>>>> Repaired inconsistent cache_size=NOT SPECIFIED
     private static $type = array(
         self::TYPE_OTHERTYPE => array(
             'name' => 'other',
