@@ -36,6 +36,69 @@ class GeoCacheCommons{
     const SIZE_XLARGE 	= 6;
     const SIZE_NONE 	= 7;
     const SIZE_NANO 	= 8;
+    
+    /**
+     * Define cache size properties
+     *
+     */
+    private static $size = array(
+        self::SIZE_OTHER => array(
+            'name'          => 'other',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_other',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+        self::SIZE_MICRO => array(
+            'name'          => 'micro',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_micro',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+        self::SIZE_SMALL => array(
+            'name'          => 'small',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_small',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+        self::SIZE_REGULAR => array(
+            'name'          => 'regular',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_regular',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+        self::SIZE_LARGE => array(
+            'name'          => 'large',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_large',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+        self::SIZE_XLARGE => array(
+            'name'          => 'xlarge',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_xLarge',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+        self::SIZE_NONE => array(
+            'name'          => 'none',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_none',
+            'sort'          => 1,
+            'actual'        => 0
+        ),
+        self::SIZE_NANO => array(
+            'name'          => 'nano',
+            'icon'          => 'undefined.png',
+            'translation'   => 'cacheSize_nano',
+            'sort'          => 1,
+            'actual'        => 1
+        ),
+    );
 
     const RECOMENDATION_RATIO = 10; //percentage of founds which can be recomeded by user
 
@@ -68,42 +131,45 @@ class GeoCacheCommons{
         }
     }
     /**
-     * Returns the cache size key based on size numeric identifier
+     * Returns the cache size translation key based on size numeric identifier
      *
      * @param int $sizeId
-     * @return string - size key for translation
+     * @return string - size translation key
      */
     public static function CacheSizeTranslationKey($sizeId)
     {
-        switch ($sizeId) {
-            case self::SIZE_OTHER:  return 'cacheSize_other';
-            case self::SIZE_NANO:   return 'cacheSize_nano';
-            case self::SIZE_MICRO:  return 'cacheSize_micro';
-            case self::SIZE_SMALL:  return 'cacheSize_small';
-            case self::SIZE_REGULAR:return 'cacheSize_regular';
-            case self::SIZE_LARGE:  return 'cacheSize_large';
-            case self::SIZE_XLARGE: return 'cacheSize_xLarge';
-            case self::SIZE_NONE:   return 'cacheSize_none';
-            default:
-                error_log(__METHOD__ . ' Unknown cache sizeId: ' . $sizeId);
-                return self::SIZE_OTHER;
+        $cache_sizes = self::$size;
+        $flag = false;
+        foreach ($cache_sizes as $cache_size_id => $cache_size) {
+            if ($cache_size_id == $sizeId) {
+                $flag = true;
+                return $cache_size['translation'];
+            }
+        }    
+        if (!$flag) {
+            error_log(__METHOD__ . ' Unknown cache sizeId: ' . $sizeId);
+            return $cache_sizes[self::SIZE_OTHER]['translation'];
         }
     }
 
+    /**
+     * Returns an array of allowed cache sizes (actually usable at runtime)
+     *
+     * @return array - cache sizes
+     */
     public static function CacheSizesArray()
     {
-        return array(
-            self::SIZE_NONE,
-            self::SIZE_NANO,
-            self::SIZE_MICRO,
-            self::SIZE_SMALL,
-            self::SIZE_REGULAR,
-            self::SIZE_LARGE,
-            self::SIZE_XLARGE,
-            self::SIZE_OTHER
-        );
-    }
-
+        global $config; 
+        $cache_sizes = self::$size;
+        $sizes = array();
+        foreach ($cache_sizes as $cache_size_id => $cache_size) {
+            if( in_array($cache_size_id, $config['forbiddenCacheSizes']) ) {
+                continue;
+            }
+            $sizes[$cache_size_id] = $cache_size;
+        }
+        return $sizes;
+    }    
 
     /**
      * Returns TypeId of the cache based on OKAPI description

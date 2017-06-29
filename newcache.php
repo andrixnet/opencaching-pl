@@ -340,6 +340,8 @@ if ($error == false) {
         tpl_set_var('terrain_options', $terrain_options);
 
         //size options
+        tpl_set_var('size_none_id', GeoCacheCommons::SIZE_NONE);
+        tpl_set_var('size_none_text',tr(GeoCacheCommons::CacheSizeTranslationKey(GeoCacheCommons::SIZE_NONE)));
         tpl_set_var('sizeoptions', buildCacheSizeSelector($sel_type, $sel_size));
         if ($sel_type == GeoCache::TYPE_VIRTUAL || $sel_type == GeoCache::TYPE_WEBCAM || $sel_type == GeoCache::TYPE_EVENT) {
             tpl_set_var('is_disabled_size', 'disabled');
@@ -799,30 +801,26 @@ if ($no_tpl_build == false) {
 
 function buildCacheSizeSelector($sel_type, $sel_size)
 {
-    $sizes = '<option value="-1" disabled selected="selected">' . tr('select_one') . '</option>';
-    foreach (GeoCacheCommons::CacheSizesArray() as $size) {
-
-        if( in_array($size, $GLOBALS['config']['forbiddenCacheSizes']) ){
-            continue;
-        }
+    $sizes = '<option value="-1" disabled selected="selected">' . tr('select_one') . '</option>' . "\n";
+    foreach (GeoCacheCommons::CacheSizesArray() as $size => $cache_size) {
 
         if ($sel_type == GeoCacheCommons::TYPE_EVENT || $sel_type == GeoCacheCommons::TYPE_VIRTUAL || $sel_type == GeoCacheCommons::TYPE_WEBCAM) {
-
-            if ($size == GeoCacheCommons::SIZE_NONE) {
-                $sizes .= '<option value="' . $size . '" selected="selected">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>';
+            // no physical container
+            if ($cache_size['actual'] == 0) {
+                $sizes .= '<option value="' . $size . '" selected="selected">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>' . "\n";
             } else {
-                $sizes .= '<option value="' . $size . '">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>';
+                $sizes .= '<option value="' . $size . '">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>' . "\n";
             }
-
-        } elseif ($size != GeoCacheCommons::SIZE_NONE) {
-
-            if ($size == $sel_size) {
-                $sizes .= '<option value="' . $size . '" selected="selected">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>';
-            } else {
-                $sizes .= '<option value="' . $size . '">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>';
+        } else {
+            // actual physical container
+            if ($cache_size['actual'] == 1) {
+                if ($size == $sel_size) {
+                    $sizes .= '<option value="' . $size . '" selected="selected">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>' . "\n";
+                } else {
+                    $sizes .= '<option value="' . $size . '">' . tr(GeoCacheCommons::CacheSizeTranslationKey($size)) . '</option>' . "\n";
+                }
             }
-
-        }
+        }    
     }
     return $sizes;
 }

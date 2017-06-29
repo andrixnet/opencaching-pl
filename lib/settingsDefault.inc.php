@@ -7,6 +7,8 @@
 
 require_once __dir__ . '/cache.php';
 
+use lib\Objects\GeoCache\GeoCacheCommons;
+
 // OC specific email addresses for international use
 // override in settings.inc.php to values you want to locally use
 
@@ -97,14 +99,19 @@ $config = array(
         cache::TYPE_OWNCACHE => 1,
     ),
     /**
-     * not allowed cache sizes (user cannot create caches of this sizes).
+     * Supported but not allowed cache sizes (user cannot create caches of these sizes).
+     * Commented entries are allowed
      *
-     * Cachesizes must be lib/cache.php constant SIZE_*
      */
     'forbiddenCacheSizes' => array(
-	cache::SIZE_NANO,
-	cache::SIZE_OTHER,
-        //cache::SIZE_MICRO,
+        GeoCacheCommons::SIZE_OTHER,
+        GeoCacheCommons::SIZE_NANO,
+//        GeoCacheCommons::SIZE_MICRO,
+//        GeoCacheCommons::SIZE_SMALL,
+//        GeoCacheCommons::SIZE_REGULAR,
+//        GeoCacheCommons::SIZE_LARGE,
+//        GeoCacheCommons::SIZE_XLARGE,
+//        GeoCacheCommons::SIZE_NONE,
     ),
     /** The filter fragment selecting provinces from nuts_codes table. */
     'provinceNutsCondition' => '`code` like \'PL__\'',
