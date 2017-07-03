@@ -3,124 +3,116 @@
 ?>
 <script src="tpl/stdstyle/js/jquery-2.0.3.min.js"></script>
 <script type="text/javascript">
-    $(function () {
-        chkcountry2();
+$(function () {
+    chkcountry2();
+});
+  
+var maAttributes = new Array({jsattributes_array});
+function check_if_proceed() {
+    //purpose: to warn user on changes lost - warning appears in case any change has been done (hidden any_changes set to "yes" by"yes_change func")
+    var any_change = document.getElementById('any_changes').value;
+    if (any_change == "yes") {
+        var answ = confirm('{{ec_proceed_without_save}}');
+        if (answ == true) {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return true;
+    }
+}
+
+function yes_change() {
+    //purpose: set any_changes flag to "yes" - in order to trigger warning in check_if_proceed func
+    var hidden_a_c = document.getElementById('any_changes');
+    hidden_a_c.value = "yes";
+    //alert ('Change!');
+}
+
+function chkcountry2() {
+    $('#region1').hide();
+    $('#regionAjaxLoader').show();
+    request = $.ajax({
+        url: "ajaxGetRegionsByCountryCode.php",
+        type: "post",
+        data: {countryCode: $('#country').val(), selectedRegion: '{cache_region}'},
     });
-            var maAttributes = new Array({jsattributes_array});
-            function check_if_proceed() {
-//purpose: to warn user on changes lost - warning appears in case any change has been done (hidden any_changes set to "yes" by"yes_change func")
-                var any_change = document.getElementById('any_changes').value;
-                if (any_change == "yes")
-                {
-                    var answ = confirm('{{ec_proceed_without_save}}');
-                    if (answ == true) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                    ;
-                } else {
-                    return true;
-                }
-            }
+    // callback handler that will be called on success
+    request.done(function (response, textStatus, jqXHR) {
+        $('#region1').html(response);
+        console.log(response);
+    });
+    request.always(function () {
+        $('#regionAjaxLoader').hide();
+        $('#region1').fadeIn(1000);
+    });
+}
 
-    function yes_change() {
-        //purpose: set any_changes flag to "yes" - in order to trigger warning in check_if_proceed func
-        var hidden_a_c = document.getElementById('any_changes');
-        hidden_a_c.value = "yes";
-        //alert ('Change!');
-
-    }
-    ;
-    function chkcountry2() {
-        $('#region1').hide();
-        $('#regionAjaxLoader').show();
-        request = $.ajax({
-            url: "ajaxGetRegionsByCountryCode.php",
-            type: "post",
-            data: {countryCode: $('#country').val(), selectedRegion: '{cache_region}'},
-        });
-        // callback handler that will be called on success
-        request.done(function (response, textStatus, jqXHR) {
-            $('#region1').html(response);
-            console.log(response);
-        });
-        request.always(function () {
-            $('#regionAjaxLoader').hide();
-            $('#region1').fadeIn(1000);
-        });
-    }
-
-    function _chkVirtual ()
-    {
-    if (document.editcache_form.type.value == "4" || document.editcache_form.type.value == "5" || document.editcache_form.type.value == "6" || ({other_nobox} && document.editcache_form.type.value == "1"))
-    {
-    if (document.editcache_form.size.options[document.editcache_form.size.options.length - 1].value != "7")
-    {
-    document.editcache_form.size.options[document.editcache_form.size.options.length] = new Option('{{size_07}}', '7');
-    }
-
-    if (!({other_nobox} && document.editcache_form.type.value == "1"))
-    {
-    document.editcache_form.size.value = "7";
+function _chkVirtual () {
+    if (document.editcache_form.type.value == "4" 
+        || document.editcache_form.type.value == "5" 
+        || document.editcache_form.type.value == "6" 
+        || ({other_nobox} && document.editcache_form.type.value == "1")) {
+        
+        if (document.editcache_form.size.options[document.editcache_form.size.options.length - 1].value != "7") {
+            document.editcache_form.size.options[document.editcache_form.size.options.length] = new Option('{{size_07}}', '7');
+        }
+        if (!({other_nobox} && document.editcache_form.type.value == "1")) {
+            document.editcache_form.size.value = "7";
             document.editcache_form.size.disabled = true;
-    }
-    else
+        } else {
             document.editcache_form.size.disabled = false;
-    }
-    else
-    {
+        }
+    } else {
         if (document.editcache_form.size.options[document.editcache_form.size.options.length - 1].value == "7")
             document.editcache_form.size.options[document.editcache_form.size.options.length - 1 ] = null;
         document.editcache_form.size.disabled = false;
-        }
-        return false;
     }
-    function extractregion()
-    {
-        var latNS = document.forms['editcache_form'].latNS.value;
-        var lat_h = document.forms['editcache_form'].lat_h.value;
-        var lat_min = document.forms['editcache_form'].lat_min.value;
-        var lat;
-        lat = (lat_h * 1) + (lat_min / 60);
-        if (latNS == "S")
-            lat = -lat;
-        var lonEW = document.forms['editcache_form'].lonEW.value;
-        var lon_h = document.forms['editcache_form'].lon_h.value;
-        var lon_min = document.forms['editcache_form'].lon_min.value;
-        var lon;
-        lon = (lon_h * 1) + (lon_min / 60);
-        if (lonEW == "W")
-            lon = -lon;
-        if (document.editcache_form.lat_h.value == "0" && document.editcache_form.lon_h.value == "0") {
-            alert("Please input coordinates location of cache");
-        } else {
-            window.open('/region.php?lat=' + lat + '&lon=' + lon + '&popup=y', 'Region', 'width=300,height=250');
-        }
-        return false;
+    return false;
+}
+    
+function extractregion() {
+    var latNS = document.forms['editcache_form'].latNS.value;
+    var lat_h = document.forms['editcache_form'].lat_h.value;
+    var lat_min = document.forms['editcache_form'].lat_min.value;
+    var lat;
+    lat = (lat_h * 1) + (lat_min / 60);
+    if (latNS == "S")
+        lat = -lat;
+    var lonEW = document.forms['editcache_form'].lonEW.value;
+    var lon_h = document.forms['editcache_form'].lon_h.value;
+    var lon_min = document.forms['editcache_form'].lon_min.value;
+    var lon;
+    lon = (lon_h * 1) + (lon_min / 60);
+    if (lonEW == "W")
+        lon = -lon;
+    if (document.editcache_form.lat_h.value == "0" && document.editcache_form.lon_h.value == "0") {
+        alert("Please input coordinates location of cache");
+    } else {
+        window.open('/region.php?lat=' + lat + '&lon=' + lon + '&popup=y', 'Region', 'width=300,height=250');
     }
-    function rebuildCacheAttr()
-    {
-        var i = 0;
-        var sAttr = '';
-        for (i = 0; i < maAttributes.length; i++)
-        {
-            if (maAttributes[i][1] == 1)
-            {
-                if (sAttr != '')
-                    sAttr += ';';
-                sAttr = sAttr + maAttributes[i][0];
-                document.getElementById('attr' + maAttributes[i][0]).src = maAttributes[i][3];
-            }
-            else
-                document.getElementById('attr' + maAttributes[i][0]).src = maAttributes[i][2];
-            document.getElementById('cache_attribs').value = sAttr;
-        }
-    }
+    return false;
+}
 
-    function toggleAttr(id)
-    { // same func in newcache.tpl.php and editcache.tpl.php
-        var i = 0;
+function rebuildCacheAttr() {
+    var i = 0;
+    var sAttr = '';
+    for (i = 0; i < maAttributes.length; i++) {
+        if (maAttributes[i][1] == 1) {
+            if (sAttr != '')
+                sAttr += ';';
+            sAttr = sAttr + maAttributes[i][0];
+            document.getElementById('attr' + maAttributes[i][0]).src = maAttributes[i][3];
+        } else
+            document.getElementById('attr' + maAttributes[i][0]).src = maAttributes[i][2];
+        document.getElementById('cache_attribs').value = sAttr;
+    }
+}
+
+function toggleAttr(id) {
+// same func in newcache.tpl.php and editcache.tpl.php
+    var i = 0;
 //        var answ = '';
 //        var bike_id = '';
 //        var walk_id = '';
@@ -183,22 +175,17 @@
 //            //alert(id);
 //        }
 //        ;
-        for (i = 0; i < maAttributes.length; i++)
-        {
-            if (maAttributes[i][0] == id)
-            {
-
-                if (maAttributes[i][1] == 0)
-                    maAttributes[i][1] = 1;
-                else
-                    maAttributes[i][1] = 0;
-                rebuildCacheAttr();
-                break;
-            }
+    for (i = 0; i < maAttributes.length; i++) {
+        if (maAttributes[i][0] == id) {
+            if (maAttributes[i][1] == 0)
+                maAttributes[i][1] = 1;
+            else
+                maAttributes[i][1] = 0;
+            rebuildCacheAttr();
+            break;
         }
     }
-
-
+}
 </script>
 
 <!--[if IE 6 ]> <div id="oldIE">{{pt129}}</div><br/><br/> <![endif]-->

@@ -1,5 +1,6 @@
 <?php
 
+use lib\Objects\GeoCache\GeoCacheCommons;
 use lib\Objects\GeoCache\GeoCache;
 use Utils\Database\XDb;
 use Utils\Database\OcDb;
@@ -11,20 +12,13 @@ global $rootpath;
 
 require_once('./lib/common.inc.php');
 
-$STATUS = array("READY" => 1,
+$STATUS = array(
+    "READY" => 1,
     "TEMP_UNAVAILABLE" => 2,
     "ARCHIVED" => 3,
     "HIDDEN_FOR_APPROVAL" => 4,
     "NOT_YET_AVAILABLE" => 5,
     "BLOCKED" => 6
-);
-
-$CACHESIZE = array("MICRO" => 2,
-    "SMALL" => 3,
-    "NORMAL" => 4,
-    "LARGE" => 5,
-    "VERY_LARGE" => 6,
-    "NO_CONTAINER" => 7
 );
 
 function build_drop_seq($item_row, $selected_seq, $max_drop, $thisid, $drop_type)
@@ -39,7 +33,6 @@ function build_drop_seq($item_row, $selected_seq, $max_drop, $thisid, $drop_type
                 $drop_label_tit = tr('ec_Sequence_mp3');
                 break;
         };
-
 
         $ret = '<label title="' . $drop_label_tit . '"><select class="form-control input40" onchange="document.getElementById(\'' . $drop_type . '_seq_changed' . $item_row . '\').value=\'yes\'; yes_change(); " id="' . $drop_type . '_seq_select' . $item_row . '" name="' . $drop_type . '_seq_select' . $item_row . '">
         ';

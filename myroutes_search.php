@@ -364,6 +364,27 @@ if ($error == false) {
         if (isset($options['cachetype10'])) {
             tpl_set_var('cachetype10', ($options['cachetype10'] == 1) ? ' checked="checked"' : '');
         }
+/*
+        //build sizeoptions
+        $sizes = '';
+        foreach ($cache_size as $size) {
+
+            // blockforbidden cache sizes
+            if (($size['id'] != $cache_size) && in_array($size['id'], $config['forbiddenCacheSizes']) && !$usr['admin']) {
+                continue;
+            }
+            if ($size['id'] == $CACHESIZE['NO_CONTAINER'] && $sel_size != $CACHESIZE['NO_CONTAINER']) {
+                continue;
+            }
+            if ($size['id'] == $sel_size) {
+                $sizes .= '<option value="' . $size['id'] . '" selected="selected">' . htmlspecialchars($size[$lang], ENT_COMPAT, 'UTF-8') . '</option>';
+            } else {
+                $sizes .= '<option value="' . $size['id'] . '">' . htmlspecialchars($size[$lang], ENT_COMPAT, 'UTF-8') . '</option>';
+            }
+        }
+        tpl_set_var('sizeoptions', $sizes);
+*/
+
 
         if (isset($options['cachesize_1'])) {
             tpl_set_var('cachesize_1', ($options['cachesize_1'] == 1) ? ' checked="checked"' : '');
