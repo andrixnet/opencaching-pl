@@ -1,0 +1,125 @@
+###########################################################################
+# www.opencaching.XX
+#
+
+<VirtualHost *:443>
+    ServerName www.opencaching.XX
+    ServerAdmin contact@opencaching.XX 
+    DocumentRoot /path/to/oc_root_directory
+
+    ErrorLog /var/log/httpd/oc_XX/error.log
+    CustomLog /var/log/httpd/oc_XX/access.log combined
+    #ScriptLog /var/log/httpd/oc_XX/script.log
+
+<IfModule ssl_module>
+    SSLEngine on
+
+    SSLCertificateFile "/etc/cert/OC.crt"
+    SSLCertificateKeyFile "/etc/cert/OC.key"
+    SSLCACertificateFile "/etc/cert/ca.crt"
+
+    # Enable HTTP Strict-Transport-Security (HSTS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
+
+#    CustomLog "/var/log/httpd/oc_XX/ssl_request.log" "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+</IfModule>
+
+    DirectoryIndex index.php index.htm index.html
+
+    <Directory /path/to/oc_root_directory>
+        AllowOverride All
+        Options -Indexes
+        Require all granted
+        SSLRequireSSL
+
+        php_value short_open_tag 1
+# Total request size
+        php_admin_value post_max_size 20M
+# Largest file upload
+        php_admin_value upload_max_filesize 15M
+    </Directory>
+
+    <Directory /path/to/oc_dynamic>
+        Options -Indexes
+        Require all granted
+    </Directory>
+
+    <Directory /path/to/oc_root_directory/okapi>
+        Options -Indexes
+        AllowOverride All
+        php_value short_open_tag 1
+        php_admin_value safe_mode "off"
+    </Directory>
+
+    Alias /images/uploads/      /path/to/oc_dynamic/images/uploads/
+    Alias /uploads/             /path/to/oc_dynamic/images/uploads/
+    Alias /upload/              /path/to/oc_dynamic/images/uploads/
+    Alias /wigo/                /path/to/oc_dynamic/wigo/
+    Alias /download/            /path/to/oc_dynamic/download/
+    Alias /images/statpics/     /path/to/oc_dynamic/images/statpics/
+    Alias /images/mini-mapa/    /path/to/oc_dynamic/images/mini-mapa/
+    Alias /mp3/                 /path/to/oc_dynamic/mp3/
+    Alias /tmp/                 /path/to/oc_dynamic/tmp/
+
+    RedirectMatch permanent /wiki(.*)$ http://wiki.opencaching.XX/
+    RedirectMatch permanent /mobile(.*)$ http://m.opencaching.XX/
+
+    <FilesMatch "\.(php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName opencaching.XX
+    #ServerAlias ABC.opencaching.XX
+
+<IfModule ssl_module>
+    SSLEngine on
+
+    SSLCertificateFile "/etc/cert/OC.crt"
+    SSLCertificateKeyFile "/etc/cert/OC.key"
+    SSLCACertificateFile "/etc/cert/ca.crt"
+
+    # Enable HTTP Strict-Transport-Security (HSTS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
+
+#    CustomLog "/var/log/httpd/oc_XX/ssl_request.log" "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+</IfModule>
+
+    Redirect permanent / http://www.opencaching.XX/
+</VirtualHost>
+
+<VirtualHost *:443>
+    ServerName m.opencaching.XX
+    ServerAdmin contact@opencaching.XX
+    DocumentRoot /path/to/oc_root_directory/mobile
+
+    ErrorLog /var/log/httpd/oc_XX/error_mobile.log
+    CustomLog /var/log/httpd/oc_XX/access_mobile.log combined
+    #ScriptLog /var/log/httpd/oc_XX/script_mobile.log
+
+<IfModule ssl_module>
+    SSLEngine on
+
+    SSLCertificateFile "/etc/cert/OC.crt"
+    SSLCertificateKeyFile "/etc/cert/OC.key"
+    SSLCACertificateFile "/etc/cert/ca.crt"
+
+    # Enable HTTP Strict-Transport-Security (HSTS)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
+
+#    CustomLog "/var/log/httpd/oc_XX/ssl_request.log" "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+</IfModule>
+
+    DirectoryIndex index.php index.htm index.html
+
+    <Directory /path/to/oc_root_directory/mobile>
+        Options -Indexes
+        Require all granted
+    </Directory>
+
+</VirtualHost>

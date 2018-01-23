@@ -1,0 +1,212 @@
+Server configurations
+=====================
+
+    Sample configurations, recommended optimizations and parameter discussions.
+    
+###########################################################################
+Web server
+==========
+    A sample webserver configuration file is oc_vhost.conf-basic.
+    A sample secure webserver configuration file is oc_vhost_secure.conf-basic
+    
+    A few significant configuration directives are discussed in more detail below:
+    
+    VirtualHost configuration:
+    --------------------------
+    
+        Options -Indexes 
+            do not allow directory contents to be listed. Good security measure.
+            
+        # Total request size
+        php_admin_value post_max_size 20M
+            PHP interpreter limit for all HTTP headers + sum of all uploaded files.
+            This is a hard limit on your uploads and must be correlated with
+            all other file upload limits in the site configuration.
+            Affects memory usage.
+            Affects temporary disk space usage.
+            
+        # Largest file upload
+        php_admin_value upload_max_filesize 15M             
+            PHP interpreter limit for a single uploaded file.
+        
+<VirtualHost *:80>
+    ServerName opencaching.XX
+    #ServerAlias ABC.opencaching.XX
+    Redirect permanent / http://www.opencaching.XX/
+</VirtualHost> 
+        
+            It is recommended that the website works under a single name and 
+            all other names used to redirect to the main name.
+            Also, it is recommended that redirection be done at webserver config
+            level rather then a RewriteRule in .htaccess. This enhances per-node
+            configurability.
+
+    Redirect permanent / http://www.opencaching.XX/
+                          ^^^^^^^^^^^^^^^^^^^^^^ main name
+            It is your choice for the main name to be with or without www.
+            Just configure accordingly.
+            
+    SSLRequireSSL
+            Force the usage of SSL.
+            
+    SSLOptions +StdEnvVars
+            Expose SSL related environment variables
+            
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubdomains; preload"
+            Enable HTTP Strict-Transport-Security (HSTS)
+            
+    Running both HTTP and HTTPS:
+    ****************************
+        In order to support a number of third party apps it is recommended that
+        the website is accessible via both HTTP and HTTPS and that accessing it via
+        HTTP is __NOT__ redirected to the HTTPS version.
+        
+        Furthermore, it is recommended to write separate VirtualHost sections 
+        for HTTP (port 80) and for HTTPS (port 443).
+
+    Global configuration:
+    ---------------------
+    
+    Choose the webserver worker module from:
+    mpm_prefork
+    mpm_worker
+    mpm_event
+    
+        OPENCACHING-PL web application can work with any worker. These are mentioned here
+        for optimization purposes.
+    
+    mpm_prefork
+    -----------
+        This Multi-Processing Module (MPM) implements a non-threaded, pre-forking web server.
+        http://httpd.apache.org/docs/current/mod/prefork.html
+        
+        Pros and cons: TODO
+        
+        Recommended settings: TODO
+        
+    mpm_worker
+    ----------
+        This Multi-Processing Module (MPM) implements a hybrid multi-process multi-threaded server.
+        http://httpd.apache.org/docs/current/mod/worker.html
+
+        Pros and cons: TODO
+        
+        Recommended settings: TODO
+        
+    mpm_event
+    ---------
+        A variant of the worker MPM with the goal of consuming threads only 
+        for connections with active processing.
+        http://httpd.apache.org/docs/current/mod/event.html
+
+        Pros and cons: TODO
+        
+        Recommended settings: TODO
+        
+    HTTPS global configuration
+    --------------------------
+    
+        HTTPS is a delicate subject and needs fine tuning for a good secure setup.
+        Check Apache's SSL module's configuration and update accordingly.
+        
+        TODO: enhance this section
+        
+        SSLProtocol -ALL +TLSv1 +TLSv1.1 +TLSv1.2
+            Explicitely disallow protocols known to be vulnerable.
+            
+        # Recommended by Mozilla
+        SSLCipherSuite ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!3DES:!MD5:!PSK;    
+            A strong cipher suite is required for a good secure setup.
+            
+        SSLHonorCipherOrder     on
+        SSLCompression          off
+        
+        SSLUseStapling On
+        SSLStaplingStandardCacheTimeout 3600
+        SSLStaplingErrorCacheTimeout 600
+        SSLStaplingResponderTimeout 5
+        SSLStaplingReturnResponderErrors off
+        SSLStaplingCache shmcb:/var/run/ocsp_stapling_cache(128000)
+            Enable OCSP stapling.
+            See: https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol
+
+        You can test how secure is your configuration here: https://www.ssllabs.com/ssltest/
+
+        
+###########################################################################
+PHP interpreter
+===============
+    The default configuration (php.ini) for PHP should be adequate.
+    As seen in the sample VirtualHost configuration file, it is preferred to 
+    set all PHP directives there rather then in the global php.ini.
+    
+    Each php_* directive needed is discussed under web server.
+
+    
+###########################################################################
+Database server
+===============
+    Both MySQL and MariaDB use much the same configuration.
+    Some details may differ according to your database server version. 
+    Read the corresponding documentation if unsure.
+    
+    TODO: optimize values
+    
+    Edit either /etc/my.cnf or /etc/my.cnf.d/FILE.cnf
+    (listing here only relevant directives)
+    
+# The MySQL server
+[mysqld]
+
+key_buffer_size = 16M
+# new in MariaDB, set same as key_buffer_size
+aria-pagecache-buffer-size = 16M
+
+# required to handle NUTS data
+max_allowed_packet = 64M
+
+# Values for medium memory usage 
+table_open_cache = 64
+sort_buffer_size = 1M
+net_buffer_length = 8K
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+myisam_sort_buffer_size = 8M
+thread_cache_size = 2
+query_cache_size = 1M
+
+# Try number of CPU's*2 for thread_concurrency
+thread_concurrency = 2
+
+# Character set defaults
+character_set_server = utf8
+collation_server = utf8_general_ci
+
+[mysqldump]
+# required to handle NUTS data
+max_allowed_packet = 64M
+
+        
+###########################################################################
+Mail server
+===========
+    A working MTA (Mail Transport Agent) is required to deliver notification emails.
+    A default configuration is sufficient, once the mail server software is installed.
+    
+    The following assumes your MTA is sendmail.
+    
+    /etc/mail/local-host-names should contain:
+    opencaching.XX
+        Where XX is your domain Top Level.
+        This ensures that the mailserver will receive returned email properly.
+    
+    /etc/mail/aliases should additionally contain:    
+    noreply:     /dev/null
+    watch:       /dev/null
+        Assuming noreply@opencaching.XX and watch@opencaching.XX are the envelope emails
+        configured in the OPENCACHING-PL web application.
+        This ensures any returned errors are dropped and won't eat up disk space.
+        
+        Make sure to run newaliases and restart sendmail after changing these file.
+        
+    Adjust according to your mailserver configuration, if it configured to do more.

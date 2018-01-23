@@ -1,14 +1,106 @@
-Server configurations
+System configurations
 =====================
 
-    Required server configurations for running OPENCACHING-PL
-web application.
+***************************************************************************
 
-	It is recommended that besides the web application directory and oc-dynamic
-directory, an oc-admin directory be created to host these scripts.
-	/path/to/oc-admin must be owned by same unix user as OPENCACHING-PL code.
+    Required system configurations for running OPENCACHING-PL web application.
+    
+Hardware requirements:
+======================
+    Minimum requirements: 1xCPU; 1GB RAM; 20+GB HDD; 1xETH
+    Either physical or virtual server running a recent Linux distribution will do.
+    
+    Depending on your production usage, you may need to increase CPU and RAM over time.
+    Depending on the size of your userbase and user generated content, you may need
+    to increase HDD over time.
+    
+Software requirements:
+======================
+
+Webserver
+---------
+    Apache webserver versions 2.4 ... TODO
+
+Database
+--------
+    MySQL database server versions ... TODO
+    MariaDB database server versions ... TODO
+    
+PHP
+---
+    PHP interpreter versions 5.6, 7.1 TODO
+
+Additional software:
+====================
+
+sendmail
+--------
+    sendmail or other MTA, necessary for delivering notification emails
+    
+gpsbabel
+--------
+    waypoint, track and route file format converter, used internally for some
+    exports
+    
+Accessory software:    
+===================
+
+bash
+----
+    shell interpreter for accessory scripts
+
+git
+---
+    git version control software - used for automatic updates from master repository.
+    
+cron
+----
+    cron (daemon to run specific jobs periodically)
+    Shoubd be configuration compatible with Dillon's crond.
+    
+sudo
+----
+    allow running programs as different user
+    
+wget
+----
+    file retrival via HTTP(S) and FTP utility
+
+***************************************************************************
+Server configuration is described in more detail in 2.README.server
+
+***************************************************************************
+
+Hosting layout recommendations
+------------------------------
+
+    OPENCACHING-PL web application uses 3 sections (storage directories)
+    * /path/to/oc_root_directory
+      website root - the code - in sync with GitHub master repository. 
+        No data is stored here. One configuration file is editable.
+    * /path/to/oc_dynamic
+      website dynamic data - user content is stored here. 
+        Must be a separate directory tree from website root.
+        webserver user must have write access here.
+    * /path/to/oc_admin
+      accessories - scripts and cron job output is stored here.
+        Must be a separate directory tree from website root. Might be stored
+        inside website dynamic data path, but not recommended.
+        
+    For security reasons it is recommended that a non-root UNIX user is the owner
+    of the above directories.
+    Administrator may use FTP for alternate to access the hosting space.
+    oc_admin may even be owned by a separate UNIX user, provided the proper sudo
+    configuration allows it to perform the update and cron tasks.
 
 
+Automatic updates from master repository
+========================================
+    OPENCACHING-PL web application is an ongoing project under continuous development.
+    There are no individual releases and the code evolves over time.
+    To stay up to date with these changes, you must configure your server
+    to handle the update process automatically.
+    
 ocpl-update.sh
 --------------
 	bash script to perform automatic update on every git commit to the repository.
@@ -39,19 +131,17 @@ ocpl-update.sh
 
 	Default:
     ********
-    Deploy under oc-admin/scripts and create a symlink in /var/www:
-
-	/path/to/oc-admin/scripts/ocpl-update.sh
-	ln -s /path/to/oc-admin/scripts/ocpl-update.sh /var/www/ocpl-update.sh
+    Deploy under oc_admin/scripts as /path/to/oc_admin/scripts/ocpl-update.sh
+    Create symlink:
+	ln -s /path/to/oc_admin/scripts/ocpl-update.sh /var/www/ocpl-update.sh
     
     Custom location:
     ***************
     Hosting does not allow placement under /var/www:
     
-    /path/to/oc-admin/scripts/ocpl-update.sh
+    /path/to/oc_admin/scripts/ocpl-update.sh
     In lib/settings.inc.php of your opencaching-pl installation, add:
-    $config['server']['update']['script'] = '/path/to/oc-admin/scripts/ocpl-update.sh';
-    
+    $config['server']['update']['script'] = '/path/to/oc_admin/scripts/ocpl-update.sh';
 
 do-wget-url.sh
 --------------
@@ -60,14 +150,14 @@ requesting dedicated pages. Saves output in files and also as stdout for
 cron so that it generates notification emails in case of errors.
 	Requires wget.
 
-	Deploy this script under oc-admin/scripts and make sure it is accessible
+	Deploy this script under oc_admin/scripts and make sure it is accessible
 to the user designated to run the OPENCACHING-PL cron jobs.
-	Create /path/to/oc-admin/cron-result and make it writable to this user.
+	Create /path/to/oc_admin/cron-result and make it writable to this user.
 
 	- set the following variables to proper values:
 		BASE_URL   - http://YOUR_OPENCACHING_HOSTNAME/ (as URL)
 		             Note: trailing / is important!
-		OUTPUT_DIR - /path/to/oc-admin/cron-result/
+		OUTPUT_DIR - /path/to/oc_admin/cron-result/
 					 Directory for scripts output. Must be writable.
 		             Note: trailing / is important!
 	- call this script from crontab (see crontab instructions)
