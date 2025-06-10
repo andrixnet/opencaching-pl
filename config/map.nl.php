@@ -107,7 +107,7 @@ $map['startPageMapDimensions'] = [250, 300];
  * cache_name is urlencoded
  * escape % using %% (printf syntax)
  *
- * The level 3 key is also used as link_text.
+ * The level 2 key is also used as link_text.
  */
 $map['external']["Flopp's Map"]['enabled'] = true;
-$map['external']['Topo BE'] = 'http://wms.ngi.be/cartoweb/service/?lat=%1$f&lon=%2$f&zoom=16';
+$map['external']['Topo BE']['enabled'] = true;

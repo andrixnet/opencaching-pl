@@ -122,7 +122,7 @@ $map['startPageMapDimensions'] = [250, 260];
  * cache_name is urlencoded
  * escape % using %% (printf syntax)
  *
- * The level 3 key is also used as link_text.
+ * The level 2 key is also used as link_text.
  */
 $map['external']['OSMapa']['enabled'] = true;     // PL specific
 $map['external']['UMP']['enabled'] = true;     // PL specific
